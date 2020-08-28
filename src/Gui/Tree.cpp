@@ -247,8 +247,8 @@ public:
     std::set<App::DocumentObject*> childSet;
     bool removeChildrenFromRoot;
     bool itemHidden;
-    std::string label;
-    std::string label2;
+    QString label;
+    QString label2;
 
     typedef boost::signals2::scoped_connection Connection;
 
@@ -269,8 +269,6 @@ public:
 
         removeChildrenFromRoot = viewObject->canRemoveChildrenFromRoot();
         itemHidden = !viewObject->showInTree();
-        label = viewObject->getObject()->Label.getValue();
-        label2 = viewObject->getObject()->Label2.getValue();
     }
 
     const char *getTreeName() const {
@@ -282,7 +280,7 @@ public:
         childSet = other->childSet;
     }
 
-    bool updateChildren(bool checkVisibility) {
+    bool updateChildren() {
         auto newChildren = viewObject->claimChildren();
         auto obj = viewObject->getObject();
         std::set<App::DocumentObject *> newSet;
@@ -300,17 +298,14 @@ public:
                     {
                         auto &parents = docItem->_ParentMap[child];
                         if(parents.insert(obj).second && child->Visibility.getValue()) {
-                            bool showable = false;
-                            for(auto parent : parents) {  
-                                if(!parent->hasChildElement() 
-                                        && parent->getLinkedObject(false)==parent)
-                                {
-                                    showable = true;
-                                    break;
-                                }
+                            auto vpd = Base::freecad_dynamic_cast<ViewProviderDocumentObject>(
+                                    Application::Instance->getViewProvider(child));
+                            if(vpd && vpd->Visibility.getValue()) {
+                                // Trigger visibility check through
+                                // ViewProviderDocumentObject::setModeSwitch(), which will call
+                                // TreeWidget::isObjectShowable().
+                                vpd->show();
                             }
-                            if(!showable)
-                                child->Visibility.setValue(false);
                         }
                     }
                 }
@@ -321,6 +316,14 @@ public:
                 // this means old child removed
                 updated = true;
                 docItem->_ParentMap[child].erase(obj);
+                auto vpd = Base::freecad_dynamic_cast<ViewProviderDocumentObject>(
+                        Application::Instance->getViewProvider(child));
+                if(vpd && vpd->Visibility.getValue()) {
+                    // Trigger visibility check through
+                    // ViewProviderDocumentObject::setModeSwitch(), which will call
+                    // TreeWidget::isObjectShowable().
+                    vpd->show();
+                }
             }
         }
         // We still need to check the order of the children
@@ -328,14 +331,6 @@ public:
         children.swap(newChildren);
         childSet.swap(newSet);
 
-        if(updated && checkVisibility) {
-            for(auto child : children) {
-                if(!child || !child->getNameInDocument() || !child->Visibility.getValue())
-                    continue;
-                if(child->getDocument()==obj->getDocument() && !docItem->isObjectShowable(child))
-                    child->Visibility.setValue(false);
-            }
-        }
         return updated;
     }
 
@@ -2701,6 +2696,8 @@ void TreeWidget::onItemSelectionChanged ()
             || updateBlocked)
         return;
 
+    preselectTimer->stop();
+
     _LastSelectedTreeWidget = this;
 
     // block tmp. the connection to avoid to notify us ourself
@@ -3108,10 +3105,16 @@ bool DocumentItem::createNewItem(const Gui::ViewProviderDocumentObject& obj,
             pdata = std::make_shared<DocumentObjectData>(
                     this, const_cast<ViewProviderDocumentObject*>(&obj));
             auto &entry = getTree()->ObjectTable[obj.getObject()];
-            if(entry.size())
-                pdata->updateChildren(*entry.begin());
-            else
-                pdata->updateChildren(true);
+            if(entry.size()) {
+                auto firstData = *entry.begin();
+                pdata->label = firstData->label;
+                pdata->label2 = firstData->label2;
+                pdata->updateChildren(firstData);
+            } else {
+                pdata->label = QString::fromUtf8(obj.getObject()->Label.getValue());
+                pdata->label2 = QString::fromUtf8(obj.getObject()->Label2.getValue());
+                pdata->updateChildren();
+            }
             entry.insert(pdata);
         }else if(pdata->rootItem && parent==NULL) {
             Base::Console().Warning("DocumentItem::slotNewObject: Cannot add view provider twice.\n");
@@ -3132,9 +3135,9 @@ bool DocumentItem::createNewItem(const Gui::ViewProviderDocumentObject& obj,
     else
         parent->insertChild(index,item);
     assert(item->parent() == parent);
-    item->setText(0, QString::fromUtf8(data->label.c_str()));
+    item->setText(0, data->label);
     if(data->label2.size())
-        item->setText(1, QString::fromUtf8(data->label2.c_str()));
+        item->setText(1, data->label2);
     if(!obj.showInTree() && !showHidden())
         item->setHidden(true);
     item->testStatus(true);
@@ -3156,20 +3159,17 @@ ViewProviderDocumentObject *DocumentItem::getViewProvider(App::DocumentObject *o
     //
     // return obj && obj->getNameInDocument() && pDocument->isIn(obj);
     //
-    // TODO: is the above isIn() check still necessary? Will
-    // getNameInDocument() check be sufficient?
 
+    // NOTE to the above comments. It is not safe to access obj pointer here.
+    // If an object is created and deleted in the same transaction, or
+    // undo/redo is simply disabled, the deleted object will be deallocated
+    // from memory.  Since we are using timer triggered lazy claimed children
+    // update, there may be invalid pointer inside the children.  We will
+    // instead assume that Gui::Document can correctly perform bookkeeping, and
+    // ask for view provider directly.
 
-    if(!obj || !obj->getNameInDocument()) return 0;
-
-    ViewProvider *vp;
-    if(obj->getDocument() == pDocument->getDocument()) 
-        vp = pDocument->getViewProvider(obj);
-    else 
-        vp = Application::Instance->getViewProvider(obj);
-    if(!vp || !vp->isDerivedFrom(ViewProviderDocumentObject::getClassTypeId()))
-        return 0;
-    return static_cast<ViewProviderDocumentObject*>(vp);
+    return Base::freecad_dynamic_cast<ViewProviderDocumentObject>(
+            Application::Instance->getViewProvider(obj));
 }
 
 void TreeWidget::slotDeleteDocument(const Gui::Document& Doc)
@@ -3240,14 +3240,34 @@ void TreeWidget::_slotDeleteObject(const Gui::ViewProviderDocumentObject& view, 
         // Check for any child of the deleted object that is not in the tree, and put it
         // under document item.
         for(auto child : data->children) {
-            if(!child || !child->getNameInDocument() || child->getDocument()!=doc)
+            auto vpd = docItem->getViewProvider(child);
+            if(!vpd || child->getDocument()!=doc)
                 continue;
-            docItem->_ParentMap[child].erase(obj);
+
+            auto pit = docItem->_ParentMap.find(child);
+            if(pit!=docItem->_ParentMap.end())
+                pit->second.erase(obj);
+
             auto cit = docItem->ObjectMap.find(child);
             if(cit==docItem->ObjectMap.end() || cit->second->items.empty()) {
-                auto vpd = docItem->getViewProvider(child);
-                if(!vpd) continue;
-                if(docItem->createNewItem(*vpd))
+                // Here means the child object has no corresponding tree item
+                // in this document.
+                bool created = false;
+                if(pit!=docItem->_ParentMap.end()) {
+                    // Because lazying loading, there maybe some parent of this
+                    // child out there didn't populate its tree item. We
+                    // iteratre the parent map to try to put the child into one
+                    // of its parent. 
+                    for(auto parent : pit->second) {
+                        if(docItem->populateObject(parent)) {
+                            created = true;
+                            break;
+                        }
+                    }
+                }
+                // If no parent can be found, create a new item to put the
+                // child in the root.
+                if(!created && docItem->createNewItem(*vpd))
                     needUpdate = true;
             }else {
                 auto childItem = *cit->second->items.begin();
@@ -3256,8 +3276,6 @@ void TreeWidget::_slotDeleteObject(const Gui::ViewProviderDocumentObject& view, 
                         needUpdate = true;
                 }
             }
-            if(child->Visibility.getValue() && !docItem->isObjectShowable(child))
-                child->Visibility.setValue(false);
         }
         docItem->ObjectMap.erase(obj);
     }
@@ -3527,28 +3545,26 @@ void TreeWidget::slotChangeObject(
         return;
 
     if(&prop == &obj->Label) {
-        const char *label = obj->Label.getValue();
+        QString label = QString::fromUtf8(obj->Label.getValue());
         auto firstData = *itEntry->second.begin();
         if(firstData->label != label) {
             for(auto data : itEntry->second) {
                 data->label = label;
-                auto displayName = QString::fromUtf8(label);
                 for(auto item : data->items)
-                    item->setText(0, displayName);
+                    item->setText(0, label);
             }
         }
         return;
     }
 
     if(&prop == &obj->Label2) {
-        const char *label = obj->Label2.getValue();
+        QString label = QString::fromUtf8(obj->Label2.getValue());
         auto firstData = *itEntry->second.begin();
         if(firstData->label2 != label) {
             for(auto data : itEntry->second) {
                 data->label2 = label;
-                auto displayName = QString::fromUtf8(label);
                 for(auto item : data->items)
-                    item->setText(1, displayName);
+                    item->setText(1, label);
             }
         }
         return;
@@ -3573,7 +3589,7 @@ void TreeWidget::updateChildren(App::DocumentObject *obj,
     for(auto data : dataSet) {
         if(!found) {
             found = data;
-            childrenChanged = found->updateChildren(force);
+            childrenChanged = found->updateChildren();
             removeChildrenFromRoot = found->viewObject->canRemoveChildrenFromRoot();
             if(!childrenChanged && found->removeChildrenFromRoot==removeChildrenFromRoot)
                 return;
@@ -3603,7 +3619,7 @@ void TreeWidget::updateChildren(App::DocumentObject *obj,
             for(auto data : it->second) {
                 if(!found) {
                     found = data;
-                    if(!found->updateChildren(false))
+                    if(!found->updateChildren())
                         break;
                 }
                 data->updateChildren(found);

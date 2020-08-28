@@ -27,6 +27,9 @@
 #ifndef _PreComp_
 #endif
 
+#include <boost/range.hpp>
+#include <boost/algorithm/string/predicate.hpp>
+
 #include <Base/Writer.h>
 #include <Base/Tools.h>
 #include <Base/Console.h>
@@ -41,8 +44,11 @@
 #include "PropertyExpressionEngine.h"
 #include "DocumentObjectExtension.h"
 #include "GeoFeatureGroupExtension.h"
+#include "ComplexGeoData.h"
 #include <App/DocumentObjectPy.h>
 #include <boost/bind/bind.hpp>
+
+typedef boost::iterator_range<const char*> CharRange;
 
 FC_LOG_LEVEL_INIT("App",true,true)
 
@@ -209,11 +215,9 @@ const char* DocumentObject::getStatusString(void) const
 }
 
 std::string DocumentObject::getFullName() const {
-    if(!getDocument() || !pcNameInDocument)
-        return "?";
-    std::string name(getDocument()->getName());
+    std::string name(getDocument()?getDocument()->getName():"?");
     name += '#';
-    name += *pcNameInDocument;
+    name += pcNameInDocument?*pcNameInDocument:oldLabel;
     return name;
 }
 
@@ -257,6 +261,12 @@ const char* DocumentObject::detachFromDocument()
 {
     const std::string* name = pcNameInDocument;
     pcNameInDocument = 0;
+
+    // Use 'oldLabel' to hold internal name when we are attached, so that
+    // getFullName() can return meaningful result even if detached, because
+    // it maybe used to diagnose problems of accessing a detached object.
+    if(name)
+        oldLabel = *name;
     return name ? name->c_str() : 0;
 }
 
@@ -768,29 +778,38 @@ DocumentObject *DocumentObject::getSubObject(const char *subname,
             return ret;
     }
 
-    std::string name;
     const char *dot=0;
     if(!subname || !(dot=strchr(subname,'.'))) {
         ret = const_cast<DocumentObject*>(this);
     }else if(subname[0]=='$') {
-        name = std::string(subname+1,dot);
+        CharRange name(subname+1,dot);
         for(auto obj : getOutList()) {
-            if(name == obj->Label.getValue()) {
+            if(boost::equals(name, obj->Label.getValue())) {
                 ret = obj;
                 break;
             }
         }
-    }else{
-        name = std::string(subname,dot);
+    } else {
         const auto &outList = getOutList();
-        if(outList.size()!=_outListMap.size()) {
-            _outListMap.clear();
-            for(auto obj : outList)
-                _outListMap[obj->getNameInDocument()] = obj;
+        if(outList.size()<=10) {
+            CharRange name(subname,dot);
+            for(auto obj : outList) {
+                if(obj && obj->getNameInDocument() && boost::equals(name,obj->getNameInDocument())) {
+                    ret = obj;
+                    break;
+                }
+            }
+        } else {
+            if(outList.size()!=_outListMap.size()) {
+                _outListMap.clear();
+                for(auto obj : outList)
+                    _outListMap[obj->getNameInDocument()] = obj;
+            }
+            std::string name(subname,dot);
+            auto it = _outListMap.find(name.c_str());
+            if(it != _outListMap.end())
+                ret = it->second;
         }
-        auto it = _outListMap.find(name.c_str());
-        if(it != _outListMap.end())
-            ret = it->second;
     }
 
     // TODO: By right, normal object's placement does not transform its sub
@@ -812,7 +831,8 @@ std::vector<DocumentObject*> DocumentObject::getSubObjectList(const char *subnam
     res.push_back(const_cast<DocumentObject*>(this));
     if(!subname || !subname[0])
         return res;
-    std::string sub(subname);
+    auto element = Data::ComplexGeoData::findElementName(subname);
+    std::string sub(subname,element-subname);
     for(auto pos=sub.find('.');pos!=std::string::npos;pos=sub.find('.',pos+1)) {
         char c = sub[pos+1];
         sub[pos+1] = 0;

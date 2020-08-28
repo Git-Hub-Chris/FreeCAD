@@ -537,6 +537,9 @@ QVariant PropertyItem::data(int column, int role) const
 {
     // property name
     if (column == 0) {
+        if (role == Qt::TextColorRole && linked)
+            return QVariant::fromValue(QColor(0,0x80,0));
+
         if (role == Qt::BackgroundRole || role == Qt::TextColorRole) {
             if(PropertyView::showAll()
                 && propertyItems.size() == 1
@@ -563,9 +566,7 @@ QVariant PropertyItem::data(int column, int role) const
             if(doc.size())
                 return type + QLatin1String("\n\n") + doc;
             return type;
-        } else if (role == Qt::TextColorRole && linked)
-            return QVariant::fromValue(QColor(0,0x80,0));
-        else
+        } else
             return QVariant();
     }
     else {
