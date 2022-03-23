@@ -30,6 +30,8 @@
 # pragma clang diagnostic ignored "-Wdelete-non-virtual-dtor"
 #endif
 
+#include <boost/io/ios_state.hpp>
+#include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/math/special_functions/round.hpp>
 #include <boost/math/special_functions/trunc.hpp>
@@ -515,20 +517,28 @@ Py::Object pyFromQuantity(const Quantity &quantity) {
     }
 }
 
-Quantity anyToQuantity(const App::any &value, const char *msg) {
+static inline bool _anyToQuantity(const App::any &value, Quantity &q) {
     if (is_type(value,typeid(Quantity))) {
-        return cast<Quantity>(value);
+        q = cast<Quantity>(value);
     } else if (is_type(value,typeid(bool))) {
-        return Quantity(cast<bool>(value)?1.0:0.0);
+        q = Quantity(cast<bool>(value)?1.0:0.0);
     } else if (is_type(value,typeid(int))) {
-        return Quantity(cast<int>(value));
+        q = Quantity(cast<int>(value));
     } else if (is_type(value,typeid(long))) {
-        return Quantity(cast<long>(value));
+        q = Quantity(cast<long>(value));
     } else if (is_type(value,typeid(float))) {
-        return Quantity(cast<float>(value));
+        q = Quantity(cast<float>(value));
     } else if (is_type(value,typeid(double))) {
-        return Quantity(cast<double>(value));
-    }
+        q = Quantity(cast<double>(value));
+    } else
+        return false;
+    return true;
+}
+
+Quantity anyToQuantity(const App::any &value, const char *msg) {
+    Quantity q;
+    if(_anyToQuantity(value,q))
+        return q;
     if(!msg)
         msg = "Failed to convert to Quantity";
     TYPE_THROW(msg);
@@ -569,10 +579,17 @@ bool isAnyEqual(const App::any &v1, const App::any &v2) {
         return false;
 
     if(!is_type(v1,v2.type())) {
-        if(is_type(v1,typeid(Quantity)))
-            return cast<Quantity>(v1) == anyToQuantity(v2);
-        else if(is_type(v2,typeid(Quantity)))
-            return anyToQuantity(v1) == cast<Quantity>(v2);
+        if(is_type(v1,typeid(Quantity))) {
+            Quantity q;
+            if(!_anyToQuantity(v2,q))
+                return false;
+            return cast<Quantity>(v1) == q;
+        } else if(is_type(v2,typeid(Quantity))) {
+            Quantity q;
+            if(!_anyToQuantity(v1,q))
+                return false;
+            return q == cast<Quantity>(v2);
+        }
 
         long l1,l2;
         double d1,d2;
@@ -622,8 +639,11 @@ bool isAnyEqual(const App::any &v1, const App::any &v2) {
     if (is_type(v1,typeid(Quantity)))
         return cast<Quantity>(v1) == cast<Quantity>(v2);
 
-    if (!isAnyPyObject(v1))
-        throw Base::TypeError("Unknown type");
+    if (!isAnyPyObject(v1)) {
+        if(FC_LOG_INSTANCE.isEnabled(FC_LOGLEVEL_LOG))
+            FC_WARN("Unknown type any: " << v1.type().name());
+        return false;
+    }
 
     Base::PyGILStateLocker lock;
     Py::Object o1 = __pyObjectFromAny(v1);
@@ -631,30 +651,42 @@ bool isAnyEqual(const App::any &v1, const App::any &v2) {
     if(!o1.isType(o2.type()))
         return false;
     int res = PyObject_RichCompareBool(o1.ptr(),o2.ptr(),Py_EQ);
-    if(res<0)
-        PyException::ThrowException();
+    if(res<0) {
+        PyException e;
+        if(FC_LOG_INSTANCE.isEnabled(FC_LOGLEVEL_LOG))
+            e.ReportException();
+        return false;
+    }
     return !!res;
 }
 
 Expression* expressionFromPy(const DocumentObject *owner, const Py::Object &value) {
-    if (value.isNone())
-        return new PyObjectExpression(owner);
-    if(value.isString()) {
-        return new StringExpression(owner,value.as_string());
-    } else if (PyObject_TypeCheck(value.ptr(),&QuantityPy::Type)) {
-        return new NumberExpression(owner,
-                *static_cast<QuantityPy*>(value.ptr())->getQuantityPtr());
-    } else if (value.isBoolean()) {
-        if(value.isTrue())
-            return new ConstantExpression(owner,"True",Quantity(1.0));
-        else
-            return new ConstantExpression(owner,"False",Quantity(0.0));
-    } else {
-        Quantity q;
-        if(pyToQuantity(q,value))
-            return new NumberExpression(owner,q);
+    try {
+        if (value.isNone())
+            return new PyObjectExpression(owner);
+        if(value.isString()) {
+            PropertyString s;
+            s.setPyObject(value.ptr());
+            return new StringExpression(owner,s.getStrValue());
+        } else if (PyObject_TypeCheck(value.ptr(),&QuantityPy::Type)) {
+            return new NumberExpression(owner,
+                    *static_cast<QuantityPy*>(value.ptr())->getQuantityPtr());
+        } else if (value.isBoolean()) {
+            if(value.isTrue())
+                return new ConstantExpression(owner,"True",Quantity(1.0));
+            else
+                return new ConstantExpression(owner,"False",Quantity(0.0));
+        } else {
+            Quantity q;
+            if(pyToQuantity(q,value))
+                return new NumberExpression(owner,q);
+        }
+        return new PyObjectExpression(owner,value.ptr());
+    } catch (Py::Exception &) {
+        Base::PyException::ThrowException();
     }
-    return new PyObjectExpression(owner,value.ptr());
+    // shouldn't be reachable
+    return nullptr;
 }
 
 } // namespace App
@@ -1180,10 +1212,31 @@ Expression* Expression::copy() const {
 
 TYPESYSTEM_SOURCE(App::UnitExpression, App::Expression)
 
-UnitExpression::UnitExpression(const DocumentObject *_owner, const Base::Quantity & _quantity, const std::string &_unitStr)
+UnitExpression *UnitExpression::create(const DocumentObject *owner, const char *unit)
+{
+    auto info = Quantity::getUnitInfo(unit);
+    if(!info)
+        return 0;
+    
+    if(strcmp(unit, "in") == 0) {
+        FC_WARN("Using deprecated unit 'in', auto change to 'inch'");
+        unit = "inch";
+    } else 
+        unit = info->display;
+    return new UnitExpression(owner, info->quantity, unit);
+}
+
+UnitExpression::UnitExpression(const DocumentObject *_owner, const Base::Quantity & _quantity, const char *unit)
     : Expression(_owner)
     , quantity(_quantity)
-    , unitStr(_unitStr)
+    , unitStr(unit)
+{
+}
+
+UnitExpression::UnitExpression(const DocumentObject *_owner, const Base::Quantity & _quantity)
+    : Expression(_owner)
+    , quantity(_quantity)
+    , unitStr(0)
 {
 }
 
@@ -1242,7 +1295,10 @@ Expression *UnitExpression::simplify() const
 
 void UnitExpression::_toString(std::ostream &ss, bool,int) const
 {
-    ss << unitStr;
+    if(unitStr)
+        ss << unitStr;
+    else
+        ss << quantity.getUnit().getStdString();
 }
 
 /**
@@ -1422,6 +1478,7 @@ static Py::Object calc(const Expression *expr, int op,
     BINARY_OP(MUL,Multiply)
     BINARY_OP(UNIT,Multiply)
     BINARY_OP(DIV,TrueDivide)
+    BINARY_OP(UNIT_ADD,Add)
     case OperatorExpression::ADD: {
         PyObject *res;
         if (PyUnicode_CheckExact(*l) && PyUnicode_CheckExact(*r)) {
@@ -1568,6 +1625,9 @@ void OperatorExpression::_toString(std::ostream &s, bool persistent,int) const
     case GTE:
         s << " >= ";
         break;
+    case UNIT_ADD:
+        s << " ";
+        break;
     case UNIT:
         break;
     default:
@@ -1631,12 +1691,15 @@ int OperatorExpression::priority() const
     case DIV:
     case MOD:
         return 4;
-    case POW:
-        return 5;
-    case UNIT:
     case NEG:
     case POS:
+        return 5;
+    case UNIT_ADD:
         return 6;
+    case UNIT:
+        return 7;
+    case POW:
+        return 8;
     default:
         assert(false);
         return 0;
@@ -1712,70 +1775,65 @@ struct HiddenReference {
     bool cond;
 };
 
+const std::vector<FunctionExpression::FunctionInfo> &FunctionExpression::getFunctions()
+{
+    static std::vector<FunctionInfo> functions = {
+        {ACOS, "acos", "Inverse cosine of a value"},
+        {ASIN, "asin", "Inverse sine of a value"},
+        {ATAN, "atan", "Ibverse tangent of a value"},
+        {ABS, "abs", "Absolute value of a number"},
+        {EXP, "exp", "Euler's number raised to a power"},
+        {LOG, "log", "The natural (base e) logarithm of a number"},
+        {LOG10, "log10", "The common (base 10) logarithm of a number"},
+        {SIN, "sin", "Sine of a value"},
+        {SINH, "sinh", "Hyperbolic sine of a value"},
+        {TAN, "tan", "Tangent of a value"},
+        {TANH, "tanh", "Hyperbolic tangent of a value"},
+        {SQRT, "sqrt", "Square root of a number"},
+        {COS, "cos", "Cosine of a value"},
+        {COSH, "cosh", "Hyperbolic cosine of a value"},
+        {ATAN2, "atan2", "Arctangent of a value"},
+        {MOD, "mod", "mod(dividend, divider), modulo (remainder) operator"},
+        {POW, "pow", "power(base, exponent), return a number raised to a power"},
+        {ROUND, "round", "Rounds a number to the nearest integer"},
+        {TRUNC, "trunc", "Truncate a number to an integer"},
+        {CEIL, "ceil", "Return the largest integer not less than a number"},
+        {FLOOR, "floor", "Return the largest integer not greater than a number"},
+        {HYPOT, "hypot", "hypot(x, y, [z]) = sqrt(x^2 + y^2 + z^2), where z is optional"},
+        {CATH, "cath", "cath(x, y, [z]) = sqrt(x^2 - y^2 - z^2), where z is optional"},
+        {LIST, "list", "list(arg...), create a Python list"},
+        {TUPLE, "tuple", "tuple(arg...), create a Python tuple"},
+        {MSCALE, "mscale", "mscale(matrix, vector)\n"
+                           "mscale(matrix, scalex, scaley, scalez)\n\n"
+                           "Scaling of a matrix"},
+        {MINVERT, "minvert", "minvert(matrix|placement|rotation)\n\n"
+                             "Invert either a matrix, placement or rotation"},
+        {CREATE, "create", "create(type,...)\n\n"
+                           "Create a new Python object with the given type.\n"
+                           "Currently supported types can be specified as string\n"
+                           "with value, vector, matrix, placement or rotation"},
+        {STR, "str", "str(arg), convert the input argument to string"},
+        {HREF, "href", "href(arg), Deprecated! Use hiddenref() instead."},
+        {HIDDENREF, "hiddenref", "hiddenref(arg), hide any object reference inside the input.\n"
+                                  "This allows to create cyclic references. Use with caution!"},
+
+        // Aggregates
+        {SUM, "sum", "Sum a list of numbers or cells"},
+        {COUNT, "count", "Count the number of non-empty cells in the given range"},
+        {AVERAGE, "average", "Compute the average of a list of numbers or cells"},
+        {STDDEV, "stddev", "Compute the standard deviation of a list of numbers or cells"},
+        {MIN, "min", "Find the smallest number"},
+        {MAX, "max", "Find the largest number"},
+    };
+    return functions;
+}
+
 FunctionExpression::FunctionExpression(const DocumentObject *_owner, Function _f, std::string &&name, std::vector<Expression *> _args)
     : UnitExpression(_owner)
     , f(_f)
     , fname(std::move(name))
     , args(_args)
 {
-    switch (f) {
-    case ACOS:
-    case ASIN:
-    case ATAN:
-    case ABS:
-    case EXP:
-    case LOG:
-    case LOG10:
-    case SIN:
-    case SINH:
-    case TAN:
-    case TANH:
-    case SQRT:
-    case COS:
-    case COSH:
-    case ROUND:
-    case TRUNC:
-    case CEIL:
-    case FLOOR:
-    case MINVERT:
-    case STR:
-    case HIDDENREF:
-    case HREF:
-        if (args.size() != 1)
-            EXPR_THROW("Invalid number of arguments: exactly one required.");
-        break;
-    case MOD:
-    case ATAN2:
-    case POW:
-        if (args.size() != 2)
-            EXPR_THROW("Invalid number of arguments: exactly two required.");
-        break;
-    case HYPOT:
-    case CATH:
-        if (args.size() < 2 || args.size() > 3)
-            EXPR_THROW("Invalid number of arguments: exactly two, or three required.");
-        break;
-    case STDDEV:
-    case SUM:
-    case AVERAGE:
-    case COUNT:
-    case MIN:
-    case MAX:
-    case CREATE:
-    case MSCALE:
-        if (args.size() == 0)
-            EXPR_THROW("Invalid number of arguments: at least one required.");
-        break;
-    case LIST:
-    case TUPLE:
-        break;
-    case NONE:
-    case AGGREGATES:
-    case LAST:
-    default:
-        PARSER_THROW("Unknown function");
-        break;
-    }
 }
 
 FunctionExpression::~FunctionExpression()
@@ -2226,7 +2284,7 @@ Py::Object FunctionExpression::evaluate(const Expression *expr, int f, const std
         unit = v1.getUnit();
         break;
     default:
-        _EXPR_THROW("Unknown function: " << f,0);
+        _EXPR_THROW("Unknown function: " << f,expr);
     }
 
     /* Compute result */
@@ -2306,7 +2364,7 @@ Py::Object FunctionExpression::evaluate(const Expression *expr, int f, const std
         output = floor(value);
         break;
     default:
-        _EXPR_THROW("Unknown function: " << f,0);
+        _EXPR_THROW("Unknown function: " << f,expr);
     }
 
     return Py::asObject(new QuantityPy(new Quantity(scaler * output, unit)));
@@ -2357,84 +2415,20 @@ Expression *FunctionExpression::simplify() const
 
 void FunctionExpression::_toString(std::ostream &ss, bool persistent,int) const
 {
-    switch (f) {
-    case ACOS:
-        ss << "acos("; break;;
-    case ASIN:
-        ss << "asin("; break;;
-    case ATAN:
-        ss << "atan("; break;;
-    case ABS:
-        ss << "abs("; break;;
-    case EXP:
-        ss << "exp("; break;;
-    case LOG:
-        ss << "log("; break;;
-    case LOG10:
-        ss << "log10("; break;;
-    case SIN:
-        ss << "sin("; break;;
-    case SINH:
-        ss << "sinh("; break;;
-    case TAN:
-        ss << "tan("; break;;
-    case TANH:
-        ss << "tanh("; break;;
-    case SQRT:
-        ss << "sqrt("; break;;
-    case COS:
-        ss << "cos("; break;;
-    case COSH:
-        ss << "cosh("; break;;
-    case MOD:
-        ss << "mod("; break;;
-    case ATAN2:
-        ss << "atan2("; break;;
-    case POW:
-        ss << "pow("; break;;
-    case HYPOT:
-        ss << "hypot("; break;;
-    case CATH:
-        ss << "cath("; break;;
-    case ROUND:
-        ss << "round("; break;;
-    case TRUNC:
-        ss << "trunc("; break;;
-    case CEIL:
-        ss << "ceil("; break;;
-    case FLOOR:
-        ss << "floor("; break;;
-    case SUM:
-        ss << "sum("; break;;
-    case COUNT:
-        ss << "count("; break;;
-    case AVERAGE:
-        ss << "average("; break;;
-    case STDDEV:
-        ss << "stddev("; break;;
-    case MIN:
-        ss << "min("; break;;
-    case MAX:
-        ss << "max("; break;;
-    case LIST:
-        ss << "list("; break;;
-    case TUPLE:
-        ss << "tuple("; break;;
-    case MSCALE:
-        ss << "mscale("; break;;
-    case MINVERT:
-        ss << "minvert("; break;;
-    case CREATE:
-        ss << "create("; break;;
-    case STR:
-        ss << "str("; break;;
-    case HIDDENREF:
-        ss << "hiddenref("; break;;
-    case HREF:
-        ss << "href("; break;;
-    default:
-        ss << fname << "("; break;;
+    static std::unordered_map<int,int> _map;
+    const auto &functions = getFunctions();
+    if(_map.empty()) {
+        int i=0;
+        for(auto &info : functions)
+            _map[info.type] = i++;
     }
+    auto iter = _map.find(f);
+    if(iter != _map.end())
+        ss << functions[iter->second].name << '(';
+    else if(fname.size())
+        ss << fname << "(";
+    else
+        ss << "?(";
     for (size_t i = 0; i < args.size(); ++i) {
         ss << args[i]->toString(persistent);
         if (i != args.size() - 1)
@@ -2478,9 +2472,9 @@ void FunctionExpression::_visit(ExpressionVisitor &v)
 
 TYPESYSTEM_SOURCE(App::VariableExpression, App::UnitExpression)
 
-VariableExpression::VariableExpression(const DocumentObject *_owner, const ObjectIdentifier& _var)
+VariableExpression::VariableExpression(const DocumentObject *_owner, ObjectIdentifier &&_var)
     : UnitExpression(_owner)
-    , var(_var)
+    , var(std::move(_var))
 {
 }
 
@@ -2523,11 +2517,12 @@ const Property * VariableExpression::getProperty() const
 }
 
 void VariableExpression::addComponent(Component *c) {
+    std::unique_ptr<Component> guard(c);
     do {
         if(components.size())
             break;
         if(!c->e1 && !c->e2) {
-            var << c->comp;
+            var << std::move(c->comp);
             return;
         }
         long l1=0,l2=0,l3=1;
@@ -2565,7 +2560,7 @@ void VariableExpression::addComponent(Component *c) {
         }
     }while(0);
 
-    Expression::addComponent(c);
+    Expression::addComponent(guard.release());
 }
 
 bool VariableExpression::_isIndexable() const {
@@ -2573,7 +2568,18 @@ bool VariableExpression::_isIndexable() const {
 }
 
 Py::Object VariableExpression::_getPyValue() const {
-    return var.getPyValue(true);
+    try {
+        return var.getPyValue(true);
+    } catch (Base::Exception &) {
+        if(!hasComponent() && var.numComponents()==1
+                           && !var.hasDocumentObjectName(true))
+        {
+            Quantity q;
+            if(Quantity::fromUnitString(q,var.getComponents()[0].getName().c_str()))
+                return Py::asObject(new QuantityPy(new Quantity(q)));
+        }
+        throw;
+    }
 }
 
 void VariableExpression::_toString(std::ostream &ss, bool persistent,int) const {
@@ -2592,6 +2598,14 @@ void VariableExpression::_toString(std::ostream &ss, bool persistent,int) const 
 
 Expression *VariableExpression::simplify() const
 {
+    if(!hasComponent() && var.numComponents()==1
+                       && !var.hasDocumentObjectName(true)
+                       && !var.getProperty())
+    {
+        auto expr = UnitExpression::create(owner, var.getComponents()[0].getName().c_str());
+        if(expr)
+            return expr;
+    }
     return copy();
 }
 
@@ -2601,7 +2615,7 @@ Expression *VariableExpression::simplify() const
 
 Expression *VariableExpression::_copy() const
 {
-    return new VariableExpression(owner, var);
+    return new VariableExpression(owner, ObjectIdentifier(var));
 }
 
 void VariableExpression::_getIdentifiers(std::map<App::ObjectIdentifier,bool> &deps) const
@@ -2720,6 +2734,28 @@ void VariableExpression::setPath(const ObjectIdentifier &path)
      var = path;
 }
 
+std::vector<std::string> VariableExpression::getStringList() const {
+    auto res = var.getStringList();
+    res.reserve(res.size() + components.size());
+    std::ostringstream ss;
+    for(auto &comp : components) {
+        ss.str("");
+        comp->toString(ss,false);
+        res.push_back(ss.str());
+    }
+    return res;
+}
+
+void VariableExpression::popComponents(int count) {
+    if(count <= 0)
+        return;
+    for(;count && components.size(); --count) {
+        delete components.back();
+        components.pop_back();
+    }
+    var.popComponents(count);
+}
+
 //
 // PyObjectExpression class
 //
@@ -2760,7 +2796,9 @@ void PyObjectExpression::_toString(std::ostream &ss, bool,int) const
         ss << "None";
     else {
         Base::PyGILStateLocker lock;
-        ss << Py::Object(pyObj).as_string();
+        PropertyString s;
+        s.setPyObject(pyObj);
+        ss << s.getStrValue();
     }
 }
 
@@ -3016,7 +3054,9 @@ Range RangeExpression::getRange() const
         try {
             Py::Tuple arg(1);
             arg.setItem(0,Py::String(begin));
-            c1 = CellAddress(callable.apply(arg).as_string().c_str());
+            PropertyString s;
+            s.setPyObject(callable.apply(arg).ptr());
+            c1 = CellAddress(s.getValue());
         } catch(Py::Exception &) {
             _EXPR_PY_THROW("Invalid cell address '" << begin << "': ",this);
         } catch(Base::Exception &e) {
@@ -3027,7 +3067,9 @@ Range RangeExpression::getRange() const
         try {
             Py::Tuple arg(1);
             arg.setItem(0,Py::String(end));
-            c2 = CellAddress(callable.apply(arg).as_string().c_str());
+            PropertyString s;
+            s.setPyObject(callable.apply(arg).ptr());
+            c2 = CellAddress(s.getValue());
         } catch(Py::Exception &) {
             _EXPR_PY_THROW("Invalid cell address '" << end << "': ", this);
         } catch(Base::Exception &e) {
@@ -3177,7 +3219,8 @@ static const App::DocumentObject * DocumentObject = 0; /**< The DocumentObject t
 static bool unitExpression = false;                    /**< True if the parsed string is a unit only */
 static bool valueExpression = false;                   /**< True if the parsed string is a full expression */
 static std::stack<std::string> labels;                /**< Label string primitive */
-static std::map<std::string, FunctionExpression::Function> registered_functions;                /**< Registered functions */
+static std::unordered_map<const char*, FunctionExpression::Function,
+                         CStringHasher, CStringHasher> registered_functions; /**< Registered functions */
 static int last_column;
 static int column;
 
@@ -3212,8 +3255,6 @@ int ExpressionParserlex(void);
 
 static void initParser(const App::DocumentObject *owner)
 {
-    static bool has_registered_functions = false;
-
     using namespace App::ExpressionParser;
 
     ScanResult = 0;
@@ -3222,54 +3263,15 @@ static void initParser(const App::DocumentObject *owner)
     column = 0;
     unitExpression = valueExpression = false;
 
-    if (!has_registered_functions) {
-        registered_functions["acos"] = FunctionExpression::ACOS;
-        registered_functions["asin"] = FunctionExpression::ASIN;
-        registered_functions["atan"] = FunctionExpression::ATAN;
-        registered_functions["abs"] = FunctionExpression::ABS;
-        registered_functions["exp"] = FunctionExpression::EXP;
-        registered_functions["log"] = FunctionExpression::LOG;
-        registered_functions["log10"] = FunctionExpression::LOG10;
-        registered_functions["sin"] = FunctionExpression::SIN;
-        registered_functions["sinh"] = FunctionExpression::SINH;
-        registered_functions["tan"] = FunctionExpression::TAN;
-        registered_functions["tanh"] = FunctionExpression::TANH;
-        registered_functions["sqrt"] = FunctionExpression::SQRT;
-        registered_functions["cos"] = FunctionExpression::COS;
-        registered_functions["cosh"] = FunctionExpression::COSH;
-        registered_functions["atan2"] = FunctionExpression::ATAN2;
-        registered_functions["mod"] = FunctionExpression::MOD;
-        registered_functions["pow"] = FunctionExpression::POW;
-        registered_functions["round"] = FunctionExpression::ROUND;
-        registered_functions["trunc"] = FunctionExpression::TRUNC;
-        registered_functions["ceil"] = FunctionExpression::CEIL;
-        registered_functions["floor"] = FunctionExpression::FLOOR;
-        registered_functions["hypot"] = FunctionExpression::HYPOT;
-        registered_functions["cath"] = FunctionExpression::CATH;
-        registered_functions["list"] = FunctionExpression::LIST;
-        registered_functions["tuple"] = FunctionExpression::TUPLE;
-        registered_functions["mscale"] = FunctionExpression::MSCALE;
-        registered_functions["minvert"] = FunctionExpression::MINVERT;
-        registered_functions["create"] = FunctionExpression::CREATE;
-        registered_functions["str"] = FunctionExpression::STR;
-        registered_functions["hiddenref"] = FunctionExpression::HIDDENREF;
-        registered_functions["href"] = FunctionExpression::HREF;
-
-        // Aggregates
-        registered_functions["sum"] = FunctionExpression::SUM;
-        registered_functions["count"] = FunctionExpression::COUNT;
-        registered_functions["average"] = FunctionExpression::AVERAGE;
-        registered_functions["stddev"] = FunctionExpression::STDDEV;
-        registered_functions["min"] = FunctionExpression::MIN;
-        registered_functions["max"] = FunctionExpression::MAX;
-
-        has_registered_functions = true;
+    if (registered_functions.empty()) {
+        for(auto &info : FunctionExpression::getFunctions())
+            registered_functions.emplace(info.name, info.type);
     }
 }
 
-std::vector<std::tuple<int, int, std::string> > tokenize(const std::string &str)
+std::vector<std::tuple<int, int, std::string> > tokenize(const char *str)
 {
-    ExpressionParser::YY_BUFFER_STATE buf = ExpressionParser_scan_string(str.c_str());
+    ExpressionParser::YY_BUFFER_STATE buf = ExpressionParser_scan_string(str);
     std::vector<std::tuple<int, int, std::string> > result;
     int token;
 
@@ -3331,54 +3333,8 @@ Expression * App::ExpressionParser::parse(const App::DocumentObject *owner, cons
 
 UnitExpression * ExpressionParser::parseUnit(const App::DocumentObject *owner, const char* buffer)
 {
-    // parse from buffer
-    ExpressionParser::YY_BUFFER_STATE my_string_buffer = ExpressionParser::ExpressionParser_scan_string (buffer);
-
-    initParser(owner);
-
-    // run the parser
-    int result = ExpressionParser::ExpressionParser_yyparse ();
-
-    // free the scan buffer
-    ExpressionParser::ExpressionParser_delete_buffer (my_string_buffer);
-
-    if (result != 0)
-        throw ParserError("Failed to parse expression.");
-
-    if (ScanResult == 0)
-        throw ParserError("Unknown error in expression");
-
-    // Simplify expression
-    Expression * simplified = ScanResult->simplify();
-
-    if (!unitExpression) {
-        OperatorExpression * fraction = freecad_dynamic_cast<OperatorExpression>(ScanResult);
-
-        if (fraction && fraction->getOperator() == OperatorExpression::DIV) {
-            NumberExpression * nom = freecad_dynamic_cast<NumberExpression>(fraction->getLeft());
-            UnitExpression * denom = freecad_dynamic_cast<UnitExpression>(fraction->getRight());
-
-            // If not initially a unit expression, but value is equal to 1, it means the expression is something like 1/unit
-            if (denom && nom && essentiallyEqual(nom->getValue(), 1.0))
-                unitExpression = true;
-        }
-    }
-    delete ScanResult;
-
-    if (unitExpression) {
-        NumberExpression * num = freecad_dynamic_cast<NumberExpression>(simplified);
-
-        if (num) {
-           simplified = new UnitExpression(num->getOwner(), num->getQuantity());
-            delete num;
-        }
-        return freecad_dynamic_cast<UnitExpression>(simplified);
-    }
-    else {
-        delete simplified;
-        throw Expression::Exception("Expression is not a unit.");
-        return 0;
-    }
+    Quantity q = Quantity::parse(buffer);
+    return new UnitExpression(owner, q);
 }
 
 bool ExpressionParser::isTokenAnIndentifier(const std::string & str)
@@ -3396,15 +3352,7 @@ bool ExpressionParser::isTokenAnIndentifier(const std::string & str)
 
 bool ExpressionParser::isTokenAUnit(const std::string & str)
 {
-    ExpressionParser::YY_BUFFER_STATE buf = ExpressionParser_scan_string(str.c_str());
-    int token = ExpressionParserlex();
-    int status = ExpressionParserlex();
-    ExpressionParser_delete_buffer(buf);
-
-    if (status == 0 && token == UNIT)
-        return true;
-    else
-        return false;
+    return Quantity::getUnitInfo(boost::trim_copy(str).c_str()) != 0;
 }
 
 #if defined(__clang__)

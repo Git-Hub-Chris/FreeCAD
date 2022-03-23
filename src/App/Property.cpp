@@ -145,12 +145,31 @@ const boost::any Property::getPathValue(const ObjectIdentifier &path) const
 
 void Property::getPaths(std::vector<ObjectIdentifier> &paths) const
 {
-    paths.emplace_back(getContainer(), getName());
+    // This function is originally used by expression completer to discover
+    // extra attribute for a property. The completer has since been modified to
+    // look into Python attributes (of the Python value of the property with
+    // getPyObject()), there is no need to expose duplicated information
+    // through getPaths(), except those that provides extra information (e.g.
+    // Rotation.Angle with extra unit information which has no Python
+    // equivalent).
+
+    (void)paths;
+    // paths.emplace_back(getContainer(), getName());
 }
 
 ObjectIdentifier Property::canonicalPath(const ObjectIdentifier &p) const
 {
-    return p;
+    ObjectIdentifier res(*this);
+    for(auto &component : p.getPropertyComponents(1))
+        res.addComponent(std::move(component));
+
+    if (myName) {
+        const std::string & name = p.getPropertyName();
+        // respect property name alias (used in Spreadsheet)
+        if (name != myName)
+            res.setComponent(0, ObjectIdentifier::SimpleComponent(name.c_str()));
+    }
+    return res;
 }
 
 namespace App {

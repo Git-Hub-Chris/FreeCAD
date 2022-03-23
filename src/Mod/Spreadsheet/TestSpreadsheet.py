@@ -681,7 +681,13 @@ class SpreadsheetCases(unittest.TestCase):
         self.assertEqual(sheet.A1, Units.Quantity('1 mm'))
         self.assertEqual(sheet.A2, 0.5)
         self.assertEqual(sheet.A3, Units.Quantity('2 mm'))
-        self.assertEqual(sheet.A4, Units.Quantity('2 1/mm'))
+        # To avoid ambiguity of unit and identifier, the parser has been changed
+        # to only recognize unit if it follows a number. So, 2/mm will no longer
+        # be parsed as 2/1mm, but only consider mm as an identifier (i.e.
+        # property reference). 
+        #
+        #  self.assertEqual(sheet.A4, Units.Quantity('2 1/mm'))
+        self.assertEqual(sheet.A4, '2/mm')
         self.assertEqual(sheet.A5, Units.Quantity('2 1/mm'))
         self.assertEqual(sheet.A6, Units.Quantity('2 mm/s'))
 
@@ -794,9 +800,9 @@ class SpreadsheetCases(unittest.TestCase):
         try:
             sheet.setAlias("A1","mA")
         except Exception:
-            self.assertEqual(sheet.getAlias("A1"), None)
+            self.fail("A unit (reserved word) was used as alias which should be allowed by now")
         else:
-            self.fail("A unit (reserved word) was used as alias which shouldn't be allowed")
+            self.assertEqual(sheet.getAlias("A1"), "mA")
 
     def testPlacementName(self):
         """ Object name is equal to property name (bug #2389) """

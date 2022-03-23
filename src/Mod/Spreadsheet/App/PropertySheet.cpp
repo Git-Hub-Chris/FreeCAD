@@ -35,6 +35,7 @@
 #include <App/DocumentObject.h>
 #include <App/Property.h>
 #include <Base/Interpreter.h>
+#include <App/Application.h>
 #include <Base/Writer.h>
 #include <Base/Reader.h>
 #include <Base/Tools.h>
@@ -130,9 +131,14 @@ bool PropertySheet::isValidAlias(const std::string &candidate)
     if (getValueFromAlias(candidate) != 0)
         return false;
 
+    // There is now an unambiguious way of referencing any alias that is a
+    // valid identifier, i.e. prefix it with a '.', which avoids clash
+    // with unit under any circumstances.
+#if 0
     /* Check to make sure it doesn't clash with a predefined unit */
     if (ExpressionParser::isTokenAUnit(candidate))
         return false;
+#endif
 
     /* Check to make sure it doesn't match a cell reference */
     if (boost::regex_match(candidate.c_str(), cm, gen)) {
@@ -647,9 +653,12 @@ void PropertySheet::setAlias(CellAddress address, const std::string &alias)
         App::ObjectIdentifier key(owner, oldAlias);
         App::ObjectIdentifier value(owner, alias.empty()?address.toString():alias);
 
-        m[key] = value;
+        m[key.canonicalPath()] = value;
 
-        owner->getDocument()->renameObjectIdentifiers(m);
+        for (auto doc : App::GetApplication().getDocuments()) {
+            for (auto obj : doc->getObjects())
+                obj->renameObjectIdentifiers(m);
+        }
     }
 
     signaller.tryInvoke();

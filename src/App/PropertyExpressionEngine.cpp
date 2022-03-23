@@ -382,7 +382,7 @@ ObjectIdentifier PropertyExpressionEngine::canonicalPath(const ObjectIdentifier 
     if (!prop)
         throw Base::RuntimeError(p.resolveErrorString().c_str());
 
-    if(ptype || prop->getContainer()!=getContainer())
+    if(ptype)
         return p;
 
     // In case someone calls this with p pointing to a PropertyExpressionEngine for some reason
@@ -468,6 +468,8 @@ void PropertyExpressionEngine::setValue(const ObjectIdentifier & path, std::shar
 {
     ObjectIdentifier usePath(canonicalPath(path));
     const Property * prop = usePath.getProperty();
+    if (!prop)
+        FC_THROWM(Base::RuntimeError, "Property not found in '" << path.toString() << "'");
 
     // Try to access value; it should trigger an exception if it is not supported, or if the path is invalid
     prop->getPathValue(usePath);
@@ -815,7 +817,7 @@ void PropertyExpressionEngine::renameExpressions(const std::map<ObjectIdentifier
 
         // Renamed now?
         if (j != canonicalPaths.end())
-            newExpressions[j->second] = i->second;
+            newExpressions[canonicalPath(j->second)] = i->second;
         else
             newExpressions[i->first] = i->second;
     }
