@@ -61,12 +61,13 @@ enum ObjectStatus {
     PendingRecompute = 11, // set by Document, indicating the object is in recomputation queue
     ObjImporting = 13, // Mark the object as importing
     NoTouch = 14, // no touch on any property change
-    GeoExcluded = 15, // mark as a member but not claimed by GeoFeatureGroup
     Expand = 16, // indicate the object's tree item expansion status
     NoAutoExpand = 17, // disable tree item auto expand on selection for this object
     PendingTransactionUpdate = 18, // mark that the object expects a call to onUndoRedoFinished() after transaction is finished.
     RecomputeExtension = 19, // mark the object to recompute its extensions
-    TouchOnColorChange = 20, // inform view provider touch object on color change
+    ViewProviderAttached = 20, // indicate if a view provider is attached to this object
+    ObjEditing = 21, // indicate the object is current being edited (for future use)
+    TouchOnColorChange = 22, // inform view provider touch object on color change
 };
 
 /** Return object for feature execution
@@ -185,9 +186,12 @@ public:
      */
     //@{
     /** Set sub-element visibility
+     * 
+     * @param element: child element name. For performance reason, \c element must not
+     * contain any further sub-elements, i.e. there should be no '.' inside \c
+     * element.
      *
-     * For performance reason, \c element must not contain any further
-     * sub-elements, i.e. there should be no '.' inside \c element.
+     * @param visible: visibility
      *
      * @return -1 if element visibility is not supported, 0 if element is not
      * found, 1 if success
@@ -196,10 +200,26 @@ public:
 
     /** Get sub-element visibility
      *
+     * @param element: child element name. For performance reason, \c element must not
+     * contain any further sub-elements, i.e. there should be no '.' inside \c
+     * element.
+     *
      * @return -1 if element visibility is not supported or element not found, 0
      * if element is invisible, or else 1
      */
     virtual int isElementVisible(const char *element) const;
+
+    /** Get sub-object/element visibility with a given reason
+     *
+     * @param subname: subname object path. Unlike isElementVisible(), this
+     *                 function supports nested sub objects.
+     *
+     * @param reason: @sa GSReason
+     *
+     * @return -1 if sub-object/element visibility is not supported or not
+     * found, 0 if invisible, or else 1
+     */
+    virtual int isElementVisibleEx(const char *subname, int reason=GS_DEFAULT) const;
 
     /// return true to activate tree view group object handling and element visibility
     virtual bool hasChildElement() const;

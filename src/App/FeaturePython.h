@@ -55,6 +55,7 @@ public:
     void onDocumentRestored();
     std::string getViewProviderName();
     PyObject *getPyObject(void);
+    void setupObject() {}
 
     bool getSubObject(App::DocumentObject *&ret, const char *subname, PyObject **pyObj, 
             Base::Matrix4D *mat, bool transform, int depth) const;
@@ -80,6 +81,8 @@ public:
     int isElementVisible(const char *) const;
     /// Set sub-element visibility
     int setElementVisible(const char *, bool);
+    /// Get sub-object/element visibility
+    int isElementVisibleEx(const char *, int) const;
 
     bool editProperty(const char *propName);
 
@@ -105,6 +108,7 @@ private:
     FC_PY_ELEMENT(hasChildElement)\
     FC_PY_ELEMENT(isElementVisible)\
     FC_PY_ELEMENT(setElementVisible)\
+    FC_PY_ELEMENT(isElementVisibleEx)\
     FC_PY_ELEMENT(editProperty)\
 
 #define FC_PY_ELEMENT_DEFINE(_name) \
@@ -253,6 +257,13 @@ public:
             return FeatureT::isElementVisible(element);
         return ret;
     }
+    /// Get sub-object/element visibility
+    virtual int isElementVisibleEx(const char *subname, int reason) const override {
+        int ret = imp->isElementVisibleEx(subname, reason);
+        if(ret == -2)
+            return FeatureT::isElementVisibleEx(subname,reason);
+        return ret;
+    }
     /// Set sub-element visibility
     virtual int setElementVisible(const char *element, bool visible) override {
         int ret = imp->setElementVisible(element,visible);
@@ -340,6 +351,10 @@ protected:
     virtual void onDocumentRestored() override {
         imp->onDocumentRestored();
         FeatureT::onDocumentRestored();
+    }
+    virtual void setupObject() override {
+        FeatureT::setupObject();
+        imp->setupObject();
     }
 
 private:

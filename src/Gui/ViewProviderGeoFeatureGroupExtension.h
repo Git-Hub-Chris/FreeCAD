@@ -31,6 +31,8 @@
 namespace Gui
 {
 
+class LinkView;
+
 class GuiExport ViewProviderGeoFeatureGroupExtension : public ViewProviderGroupExtension
 {
     EXTENSION_PROPERTY_HEADER_WITH_OVERRIDE(Gui::ViewProviderGeoFeatureGroupExtension);
@@ -40,13 +42,12 @@ public:
     ViewProviderGeoFeatureGroupExtension(void);
     virtual ~ViewProviderGeoFeatureGroupExtension();
 
-    virtual std::vector<App::DocumentObject*> extensionClaimChildren3D(void)const override;
-    virtual std::vector< App::DocumentObject* > extensionClaimChildren(void) const override;
+    virtual void extensionClaimChildren3D(std::vector< App::DocumentObject* > &) const override;
+    virtual void extensionClaimChildren(std::vector< App::DocumentObject* > &) const override;
     virtual SoGroup* extensionGetChildRoot(void) const override {return pcGroupChildren;};
     virtual void extensionAttach(App::DocumentObject* pcObject) override;
     virtual void extensionSetDisplayMode(const char* ModeName) override;
-    virtual std::vector<std::string> extensionGetDisplayModes(void) const override;
-    virtual void extensionFinishRestoring() override;
+    virtual void extensionGetDisplayModes(std::vector<std::string> &) const override;
 
     /// Show the object in the view: suppresses behavior of DocumentObjectGroup
     virtual void extensionShow(void) override {
@@ -57,10 +58,32 @@ public:
         ViewProviderExtension::extensionHide();
     }
 
+    virtual void extensionFinishRestoring() override;
+
+    virtual bool extensionGetElementPicked(const SoPickedPoint *, std::string &) const override;
+    virtual bool extensionGetDetailPath(const char *, SoFullPath *, SoDetail *&) const override;
+    virtual bool extensionHandleChildren3D(const std::vector<App::DocumentObject*> &) override;
+
     virtual void extensionUpdateData(const App::Property*) override;
+
+    virtual void extensionModeSwitchChange(void) override;
+
+    static bool needUpdateChildren(App::DocumentObject *obj);
+
+    virtual int extensionReplaceObject(App::DocumentObject* /*oldValue*/, App::DocumentObject* /*newValue*/) override;
+
+protected:
+    void buildExport() const;
+    virtual void buildChildren3D();
+    virtual bool shouldCheckExport(App::DocumentObject *) const;
 
 protected:
     SoGroup *pcGroupChildren;
+
+private:
+    struct Private;
+    std::unique_ptr<Private> impl;
+    LinkView *linkView;
 };
 
 typedef ViewProviderExtensionPythonT<Gui::ViewProviderGeoFeatureGroupExtension> ViewProviderGeoFeatureGroupExtensionPython;
