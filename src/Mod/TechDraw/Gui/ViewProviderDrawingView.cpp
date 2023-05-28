@@ -76,7 +76,7 @@ ViewProviderDrawingView::~ViewProviderDrawingView()
 
 void ViewProviderDrawingView::attach(App::DocumentObject *pcFeat)
 {
-//    Base::Console().Message("VPDV::attach(%s)\n", pcFeat->getNameInDocument());
+//    Base::Console().Message("VPDV::attach({})\n", pcFeat->getNameInDocument());
     ViewProviderDocumentObject::attach(pcFeat);
 
     auto bnd = boost::bind(&ViewProviderDrawingView::onGuiRepaint, this, bp::_1);
@@ -257,7 +257,7 @@ Gui::MDIView *ViewProviderDrawingView::getMDIView() const
 
 void ViewProviderDrawingView::onGuiRepaint(const TechDraw::DrawView* dv)
 {
-//    Base::Console().Message("VPDV::onGuiRepaint(%s) - this: %x\n", dv->getNameInDocument(), this);
+//    Base::Console().Message("VPDV::onGuiRepaint({}) - this: {}\n", dv->getNameInDocument(), this);
     Gui::Document* guiDoc = Gui::Application::Instance->getDocument(getViewObject()->getDocument());
     if (!guiDoc)
         return;
@@ -335,7 +335,7 @@ void ViewProviderDrawingView::showProgressMessage(const std::string featureName,
 //        Gui::getMainWindow()->showStatus(Gui::MainWindow::Msg, msg);
         //Temporary implementation. This works, but the messages are queued up and
         //not displayed in the report window in real time??
-        Base::Console().Message("%s\n", qPrintable(msg));
+        Base::Console().Message("{}\n", qPrintable(msg));
     }
 }
 

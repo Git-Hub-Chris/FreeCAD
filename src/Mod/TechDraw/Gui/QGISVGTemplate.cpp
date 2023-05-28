@@ -151,7 +151,7 @@ void QGISVGTemplate::createClickHandles()
     QFile file(templateFilename);
     if (!file.open(QIODevice::ReadOnly)) {
         Base::Console().Error(
-            "QGISVGTemplate::createClickHandles - error opening template file %s\n",
+            "QGISVGTemplate::createClickHandles - error opening template file {}\n",
             svgTemplate->PageResult.getValue());
         return;
     }
@@ -188,7 +188,7 @@ void QGISVGTemplate::createClickHandles()
 
         if (name.isEmpty()) {
             Base::Console().Warning(
-                "QGISVGTemplate::createClickHandles - no name for editable text at %f, %f\n", x, y);
+                "QGISVGTemplate::createClickHandles - no name for editable text at {}, {}\n", x, y);
             return true;
         }
 

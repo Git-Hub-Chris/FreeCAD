@@ -111,7 +111,7 @@ void StartGui::Workbench::loadStartPage()
         Base::Interpreter().runString(str.str().c_str());
     }
     catch (const Base::Exception& e) {
-        Base::Console().Error("%s\n", e.what());
+        Base::Console().Error("{}\n", e.what());
     }
 }
 

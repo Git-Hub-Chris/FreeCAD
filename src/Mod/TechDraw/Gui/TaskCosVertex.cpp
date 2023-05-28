@@ -134,7 +134,7 @@ void TaskCosVertex::addCosVertex(QPointF qPos)
 {
     Gui::Command::openCommand(QT_TRANSLATE_NOOP("Command", "Add Cosmetic Vertex"));
 
-//    Base::Console().Message("TCV::addCosVertex(%s)\n", TechDraw::DrawUtil::formatVector(qPos).c_str());
+//    Base::Console().Message("TCV::addCosVertex({})\n", TechDraw::DrawUtil::formatVector(qPos).c_str());
     Base::Vector3d pos(qPos.x(), -qPos.y());
 //    int idx =
     (void) m_baseFeat->addCosmeticVertex(pos);
@@ -148,7 +148,7 @@ void TaskCosVertex::addCosVertex(QPointF qPos)
 void TaskCosVertex::onTrackerClicked(bool clicked)
 {
     Q_UNUSED(clicked);
-//    Base::Console().Message("TCV::onTrackerClicked() m_pbTrackerState: %d\n",
+//    Base::Console().Message("TCV::onTrackerClicked() m_pbTrackerState: {}\n",
 //                            m_pbTrackerState);
 
     removeTracker();

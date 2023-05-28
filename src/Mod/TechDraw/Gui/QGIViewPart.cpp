@@ -212,7 +212,7 @@ QPainterPath QGIViewPart::geomToPainterPath(BaseGeomPtr baseGeom, double rot)
                                  Rez::guiX(geom->pnts[0].x), Rez::guiX(geom->pnts[0].y));
                 }
                 else {//can only handle lines, quads, cubes
-                    Base::Console().Error("Bad pole count (%d) for BezierSegment\n", geom->poles);
+                    Base::Console().Error("Bad pole count ({}) for BezierSegment\n", geom->poles);
                     auto itBez = geom->pnts.begin() + 1;
                     for (; itBez != geom->pnts.end(); itBez++) {
                         path.lineTo(Rez::guiX((*itBez).x),
@@ -238,7 +238,7 @@ QPainterPath QGIViewPart::geomToPainterPath(BaseGeomPtr baseGeom, double rot)
                                  Rez::guiX(geom->pnts[3].x), Rez::guiX(geom->pnts[3].y));
                 }
                 else {//can only handle lines, quads, cubes
-                    Base::Console().Error("Bad pole count (%d) for BezierSegment\n", geom->poles);
+                    Base::Console().Error("Bad pole count ({}) for BezierSegment\n", geom->poles);
                     auto itBez = geom->pnts.begin() + 1;
                     for (; itBez != geom->pnts.end(); itBez++) {
                         path.lineTo(Rez::guiX((*itBez).x),
@@ -274,7 +274,7 @@ QPainterPath QGIViewPart::geomToPainterPath(BaseGeomPtr baseGeom, double rot)
                     }
                     else {//can only handle lines, quads, cubes
                         Base::Console().Error(
-                            "Bad pole count (%d) for BezierSegment of B-spline geometry\n",
+                            "Bad pole count ({}) for BezierSegment of B-spline geometry\n",
                             it->poles);
                         path.lineTo(it->pnts[1].x, it->pnts[1].y);//show something for debugging
                     }
@@ -303,7 +303,7 @@ QPainterPath QGIViewPart::geomToPainterPath(BaseGeomPtr baseGeom, double rot)
                     }
                     else {
                         Base::Console().Error(
-                            "Bad pole count (%d) for BezierSegment of B-spline geometry\n",
+                            "Bad pole count ({}) for BezierSegment of B-spline geometry\n",
                             it->poles);
                         path.lineTo(it->pnts[1].x, it->pnts[1].y);//show something for debugging
                     }
@@ -331,7 +331,7 @@ QPainterPath QGIViewPart::geomToPainterPath(BaseGeomPtr baseGeom, double rot)
             }
         } break;
         default: {
-            Base::Console().Error("Error - geomToPainterPath - UNKNOWN geomType: %d\n",
+            Base::Console().Error("Error - geomToPainterPath - UNKNOWN geomType: {}\n",
                                   static_cast<int>(baseGeom->getGeomType()));
         } break;
     }//sb end of switch
@@ -348,7 +348,7 @@ QPainterPath QGIViewPart::geomToPainterPath(BaseGeomPtr baseGeom, double rot)
 
 void QGIViewPart::updateView(bool update)
 {
-    //    Base::Console().Message("QGIVP::updateView() - %s\n", getViewObject()->getNameInDocument());
+    //    Base::Console().Message("QGIVP::updateView() - {}\n", getViewObject()->getNameInDocument());
     auto viewPart(dynamic_cast<TechDraw::DrawViewPart*>(getViewObject()));
     if (!viewPart)
         return;
@@ -378,7 +378,7 @@ void QGIViewPart::drawViewPart()
     auto viewPart(dynamic_cast<TechDraw::DrawViewPart*>(getViewObject()));
     if (!viewPart)
         return;
-    //    Base::Console().Message("QGIVP::DVP() - %s / %s\n", viewPart->getNameInDocument(), viewPart->Label.getValue());
+    //    Base::Console().Message("QGIVP::DVP() - {} / {}\n", viewPart->getNameInDocument(), viewPart->Label.getValue());
     if (!viewPart->hasGeometry()) {
         removePrimitives();//clean the slate
         removeDecorations();
@@ -523,7 +523,7 @@ void QGIViewPart::drawViewPart()
                     showItem = formatGeomFromCenterLine(cTag, item);
                 }
                 else {
-                    Base::Console().Message("QGIVP::drawVP - edge: %d is confused - source: %d\n",
+                    Base::Console().Message("QGIVP::drawVP - edge: {} is confused - source: {}\n",
                                             i, source);
                 }
             }
@@ -627,7 +627,7 @@ void QGIViewPart::drawViewPart()
 
 bool QGIViewPart::formatGeomFromCosmetic(std::string cTag, QGIEdge* item)
 {
-    //    Base::Console().Message("QGIVP::formatGeomFromCosmetic(%s)\n", cTag.c_str());
+    //    Base::Console().Message("QGIVP::formatGeomFromCosmetic({})\n", cTag.c_str());
     bool result = true;
     auto partFeat(dynamic_cast<TechDraw::DrawViewPart*>(getViewObject()));
     TechDraw::CosmeticEdge* ce = partFeat ? partFeat->getCosmeticEdge(cTag) : nullptr;
@@ -644,7 +644,7 @@ bool QGIViewPart::formatGeomFromCosmetic(std::string cTag, QGIEdge* item)
 
 bool QGIViewPart::formatGeomFromCenterLine(std::string cTag, QGIEdge* item)
 {
-    //    Base::Console().Message("QGIVP::formatGeomFromCenterLine(%d)\n", sourceIndex);
+    //    Base::Console().Message("QGIVP::formatGeomFromCenterLine({})\n", sourceIndex);
     bool result = true;
     auto partFeat(dynamic_cast<TechDraw::DrawViewPart*>(getViewObject()));
     TechDraw::CenterLine* cl = partFeat ? partFeat->getCenterLine(cTag) : nullptr;
@@ -660,7 +660,7 @@ bool QGIViewPart::formatGeomFromCenterLine(std::string cTag, QGIEdge* item)
 
 QGIFace* QGIViewPart::drawFace(TechDraw::FacePtr f, int idx)
 {
-    //    Base::Console().Message("QGIVP::drawFace - %d\n", idx);
+    //    Base::Console().Message("QGIVP::drawFace - {}\n", idx);
     std::vector<TechDraw::Wire*> fWires = f->wires;
     QPainterPath facePath;
     for (std::vector<TechDraw::Wire*>::iterator wire = fWires.begin(); wire != fWires.end();
@@ -1236,7 +1236,7 @@ QGIViewPart::faceIsGeomHatched(int i, std::vector<TechDraw::DrawGeomHatch*> geom
 void QGIViewPart::dumpPath(const char* text, QPainterPath path)
 {
     QPainterPath::Element elem;
-    Base::Console().Message(">>>%s has %d elements\n", text, path.elementCount());
+    Base::Console().Message(">>>{} has {} elements\n", text, path.elementCount());
     char* typeName;
     for (int iElem = 0; iElem < path.elementCount(); iElem++) {
         elem = path.elementAt(iElem);
@@ -1252,7 +1252,7 @@ void QGIViewPart::dumpPath(const char* text, QPainterPath path)
         else {
             typeName = "CurveData";
         }
-        Base::Console().Message(">>>>> element %d: type:%d/%s pos(%.3f, %.3f) M:%d L:%d C:%d\n",
+        Base::Console().Message(">>>>> element {}: type:{}/{} pos({:.3f}, {:.3f}) M:{} L:{} C:{}\n",
                                 iElem, static_cast<int>(elem.type), typeName, elem.x, elem.y, static_cast<int>(elem.isMoveTo()),
                                 static_cast<int>(elem.isLineTo()), static_cast<int>(elem.isCurveTo()));
     }

@@ -568,7 +568,7 @@ void ImpExpDxfWrite::exportShape(const TopoDS_Shape input)
         } else if (adapt.GetType() == GeomAbs_Line) {
             exportLine(adapt);
         } else {
-            Base::Console().Warning("ImpExpDxf - unknown curve type: %d\n", static_cast<int>(adapt.GetType()));
+            Base::Console().Warning("ImpExpDxf - unknown curve type: {}\n", static_cast<int>(adapt.GetType()));
         }
     }
 
@@ -737,7 +737,7 @@ void ImpExpDxfWrite::exportBSpline(BRepAdaptor_Curve& c)
             l = c.LastParameter();
             s = c.Value(f);
             ePt = c.Value(l);
-            Base::Console().Message("DxfWrite::exportBSpline - no result- from:(%.3f,%.3f) to:(%.3f,%.3f) poles: %d\n",
+            Base::Console().Message("DxfWrite::exportBSpline - no result- from:({:.3f},{:.3f}) to:({:.3f},{:.3f}) poles: {}\n",
                                  s.X(),s.Y(),ePt.X(),ePt.Y(),spline->NbPoles());
             TColgp_Array1OfPnt controlPoints(0,1);
             controlPoints.SetValue(0,s);

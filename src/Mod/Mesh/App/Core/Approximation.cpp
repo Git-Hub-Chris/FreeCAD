@@ -1129,7 +1129,7 @@ float CylinderFit::Fit()
         Base::Vector3d dir = cylFit.GetAxis();
 
 #if defined(FC_DEBUG)
-        Base::Console().Log("MeshCoreFit::Cylinder Fit:  Base: (%0.4f, %0.4f, %0.4f),  Axis: (%0.6f, %0.6f, %0.6f),  Radius: %0.4f,  Std Dev: %0.4f,  Iterations: %d\n",
+        Base::Console().Log("MeshCoreFit::Cylinder Fit:  Base: ({:.4f}, {:.4f}, {:.4f}),  Axis: ({:.6f}, {:.6f}, {:.64f}),  Radius: {:.4f},  Std Dev: {:.4f},  Iterations: {}\n",
             base.x, base.y, base.z, dir.x, dir.y, dir.z, cylFit.GetRadius(), cylFit.GetStdDeviation(), cylFit.GetNumIterations());
 #endif
         _vBase = Base::convertTo<Base::Vector3f>(base);
@@ -1171,7 +1171,7 @@ float CylinderFit::Fit()
 
     Eigen::LevenbergMarquardt<LMCylinderFunctor, double> lm(functor);
     int status = lm.minimize(x);
-    Base::Console().Log("Cylinder fit: %d, iterations: %d, gradient norm: %f\n", status, lm.iter, lm.gnorm);
+    Base::Console().Log("Cylinder fit: {}, iterations: {}, gradient norm: {}\n", status, lm.iter, lm.gnorm);
 
     _vAxis.x = x(0);
     _vAxis.y = x(1);
@@ -1350,7 +1350,7 @@ float SphereFit::Fit()
     _fLastResult = 0;
 
 #if defined(_DEBUG)
-    Base::Console().Message("   WildMagic Sphere Fit:  Center: (%0.4f, %0.4f, %0.4f),  Radius: %0.4f,  Std Dev: %0.4f\n",
+    Base::Console().Message("   WildMagic Sphere Fit:  Center: ({:.4f}, {:.4f}, {:.4f}),  Radius: {:.4f},  Std Dev: {:.4f}\n",
         _vCenter.x, _vCenter.y, _vCenter.z, _fRadius, GetStdDeviation());
 #endif
 
@@ -1361,7 +1361,7 @@ float SphereFit::Fit()
     if (result < FLOAT_MAX) {
         Base::Vector3d center = sphereFit.GetCenter();
 #if defined(_DEBUG)
-        Base::Console().Message("MeshCoreFit::Sphere Fit:  Center: (%0.4f, %0.4f, %0.4f),  Radius: %0.4f,  Std Dev: %0.4f,  Iterations: %d\n",
+        Base::Console().Message("MeshCoreFit::Sphere Fit:  Center: ({:.4f}, {:.4f}, {:.4f}),  Radius: {:.4f},  Std Dev: {:.4f},  Iterations: {}\n",
             center.x, center.y, center.z, sphereFit.GetRadius(), sphereFit.GetStdDeviation(), sphereFit.GetNumIterations());
 #endif
         _vCenter = Base::convertTo<Base::Vector3f>(center);

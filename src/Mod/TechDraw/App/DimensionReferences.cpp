@@ -63,7 +63,7 @@ TopoDS_Shape ReferenceEntry::getGeometry() const
             auto fgeom = dvp->getFace(getSubName());
             return fgeom->toOccFace();
         }
-        //Base::Console().Message("RE::getGeometry - returns null shape! - gType: %s\n", gType.c_str());
+        //Base::Console().Message("RE::getGeometry - returns null shape! - gType: {}\n", gType.c_str());
         return {};
     }
 

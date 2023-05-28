@@ -451,7 +451,7 @@ void TaskLeaderLine::removeFeature()
 void TaskLeaderLine::onTrackerClicked(bool clicked)
 {
     Q_UNUSED(clicked);
-//    Base::Console().Message("TTL::onTrackerClicked() m_pbTrackerState: %d\n",
+//    Base::Console().Message("TTL::onTrackerClicked() m_pbTrackerState: {}\n",
 //                            m_pbTrackerState);
     if (!m_vpp->getMDIViewPage()) {
         Base::Console().Message("TLL::onTrackerClicked - no Mdi, no Tracker!\n");
@@ -576,7 +576,7 @@ void TaskLeaderLine::onTrackerFinished(std::vector<QPointF> pts, QGIView* qgPare
 {
     //in this case, we already know who the parent is.  We don't need QGTracker to tell us.
     (void) qgParent;
-//    Base::Console().Message("TTL::onTrackerFinished() - parent: %X\n", qgParent);
+//    Base::Console().Message("TTL::onTrackerFinished() - parent: {}\n", qgParent);
     if (pts.empty()) {
         Base::Console().Error("TaskLeaderLine - no points available\n");
         return;
@@ -621,7 +621,7 @@ void TaskLeaderLine::removeTracker()
 void TaskLeaderLine::onCancelEditClicked(bool clicked)
 {
     Q_UNUSED(clicked);
-//    Base::Console().Message("TTL::onCancelEditClicked() m_pbTrackerState: %d\n",
+//    Base::Console().Message("TTL::onCancelEditClicked() m_pbTrackerState: {}\n",
 //                            m_pbTrackerState);
     abandonEditSession();
     if (m_lineFeat) {
@@ -664,7 +664,7 @@ void TaskLeaderLine::setEditCursor(QCursor cursor)
 //from 1:1 scale scene QPointF to zero origin Vector3d points
 void TaskLeaderLine::trackerPointsFromQPoints(std::vector<QPointF> pts)
 {
-//    Base::Console().Message("TTL::trackerPointsFromQPoints(%d)\n", pts.size());
+//    Base::Console().Message("TTL::trackerPointsFromQPoints({})\n", pts.size());
     m_trackerPoints.clear();
     for (auto& p: pts) {
         QPointF mapped = p - pts.front();

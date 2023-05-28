@@ -147,7 +147,7 @@ void QGITile::makeSymbol()
         return;
     }
     if (!m_qgSvg->load(&qba)) {
-        Base::Console().Error("Error - Could not load SVG renderer with **%s**\n", qPrintable(m_svgPath));
+        Base::Console().Error("Error - Could not load SVG renderer with **{}**\n", qPrintable(m_svgPath));
         return;
    }
    m_qgSvg->setScale(getSymbolFactor());
@@ -255,7 +255,7 @@ void QGITile::setTileTextCenter(std::string s)
 
 void QGITile::setFont(QFont f, double fSizePx)
 {
-//    Base::Console().Message("QGIT::setFont(%s, %.3f)\n", qPrintable(f.family()), fSizePx);
+//    Base::Console().Message("QGIT::setFont({}, {:.3f})\n", qPrintable(f.family()), fSizePx);
     m_font = f;
     m_font.setPixelSize(fSizePx);
 }
@@ -270,7 +270,7 @@ void QGITile::setFont(std::string fName, double fSizePx)
 
 void QGITile::setSymbolFile(std::string s)
 {
-//    Base::Console().Message("QGIT::setSymbolFile(%s)\n", s.c_str());
+//    Base::Console().Message("QGIT::setSymbolFile({})\n", s.c_str());
     if (!s.empty()) {
         m_svgPath = QString::fromUtf8(s.c_str());
     }

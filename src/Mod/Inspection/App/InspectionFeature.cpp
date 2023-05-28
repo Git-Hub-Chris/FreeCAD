@@ -864,7 +864,7 @@ App::DocumentObjectExecReturn* Feature::execute(void)
         fRMS = sqrt(fRMS);
     }
 
-    Base::Console().Message("RMS value for '%s' with search radius [%.4f,%.4f] is: %.4f\n",
+    Base::Console().Message("RMS value for '{}' with search radius [{:.4f},{:.4f}] is: {:.4f}\n",
         this->Label.getValue(), -this->SearchRadius.getValue(), this->SearchRadius.getValue(), fRMS);
 #else
     unsigned long count = actual->countPoints();
@@ -928,7 +928,7 @@ App::DocumentObjectExecReturn* Feature::execute(void)
             res += fMap(i);
     }
 
-    Base::Console().Message("RMS value for '%s' with search radius [%.4f,%.4f] is: %.4f\n",
+    Base::Console().Message("RMS value for '{}' with search radius [{:.4f},{:.4f}] is: {:.4f}\n",
         this->Label.getValue(), -this->SearchRadius.getValue(), this->SearchRadius.getValue(), res.getRMS());
     Distances.setValues(vals);
 #endif

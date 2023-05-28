@@ -92,7 +92,7 @@ TYPESYSTEM_SOURCE(Fem::FemMesh , Base::Persistence)
 
 FemMesh::FemMesh()
 {
-    //Base::Console().Log("FemMesh::FemMesh():%p (id=%i)\n",this,StatCount);
+    //Base::Console().Log("FemMesh::FemMesh():{} (id={})\n",this,StatCount);
     // create a mesh always with new StudyId to avoid overlapping destruction
 #if SMESH_VERSION_MAJOR >= 9
     myMesh = getGenerator()->CreateMesh(false);
@@ -113,7 +113,7 @@ FemMesh::FemMesh(const FemMesh& mesh)
 
 FemMesh::~FemMesh()
 {
-    //Base::Console().Log("FemMesh::~FemMesh():%p\n",this);
+    //Base::Console().Log("FemMesh::~FemMesh():{}\n",this);
 
     try {
         TopoDS_Shape aNull;
@@ -877,7 +877,7 @@ std::set<int> FemMesh::getNodesBySolid(const TopoDS_Solid &solid) const
     ShapeAnalysis_ShapeTolerance analysis;
     double limit = analysis.Tolerance(solid, 1, shapetype);
     Base::Console().Log(
-        "The limit if a node is in or out: %.12lf in scientific: %.4e \n", limit, limit);
+        "The limit if a node is in or out: {:.12f} in scientific: {:.4e} \n", limit, limit);
 
     // get the current transform of the FemMesh
     const Base::Matrix4D Mtrx(getTransform());
@@ -1251,7 +1251,7 @@ public:
             );
         }
         else {
-            Base::Console().Warning("NASTRAN: Failed to add face %d from nodes: (%d, %d, %d,)\n",
+            Base::Console().Warning("NASTRAN: Failed to add face {} from nodes: ({}, {}, {},)\n",
                                     element_id,
                                     elements[0],
                                     elements[1],
@@ -1314,7 +1314,7 @@ public:
             );
         }
         else {
-            Base::Console().Warning("NASTRAN: Failed to add volume %d from nodes: (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d)\n",
+            Base::Console().Warning("NASTRAN: Failed to add volume {} from nodes: ({}, {}, {}, {}, {}, {}, {}, {}, {}, {})\n",
                                     element_id,
                                     elements[1],
                                     elements[0],
@@ -1646,7 +1646,7 @@ void FemMesh::readNastran(const std::string &Filename)
     while (inputfile.good());
     inputfile.close();
 
-    Base::Console().Log("    %f: File read, start building mesh\n",Base::TimeInfo::diffTimeF(Start,Base::TimeInfo()));
+    Base::Console().Log("    {}: File read, start building mesh\n",Base::TimeInfo::diffTimeF(Start,Base::TimeInfo()));
 
     //Now fill the SMESH datastructure
     SMESHDS_Mesh* meshds = this->myMesh->GetMeshDS();
@@ -1656,7 +1656,7 @@ void FemMesh::readNastran(const std::string &Filename)
         it->addToMesh(meshds);
     }
 
-    Base::Console().Log("    %f: Done \n",Base::TimeInfo::diffTimeF(Start,Base::TimeInfo()));
+    Base::Console().Log("    {}: Done \n",Base::TimeInfo::diffTimeF(Start,Base::TimeInfo()));
 
 }
 
@@ -1781,7 +1781,7 @@ void FemMesh::readNastran95(const std::string &Filename)
     while (inputfile.good());
     inputfile.close();
 
-    Base::Console().Log("    %f: File read, start building mesh\n",Base::TimeInfo::diffTimeF(Start,Base::TimeInfo()));
+    Base::Console().Log("    {}: File read, start building mesh\n",Base::TimeInfo::diffTimeF(Start,Base::TimeInfo()));
 
     //Now fill the SMESH datastructure
     SMESHDS_Mesh* meshds = this->myMesh->GetMeshDS();
@@ -1795,7 +1795,7 @@ void FemMesh::readNastran95(const std::string &Filename)
         it->addToMesh(meshds);
     }
 
-    Base::Console().Log("    %f: Done \n",Base::TimeInfo::diffTimeF(Start,Base::TimeInfo()));
+    Base::Console().Log("    {}: Done \n",Base::TimeInfo::diffTimeF(Start,Base::TimeInfo()));
 }
 
 void FemMesh::readAbaqus(const std::string &FileName)
@@ -1831,7 +1831,7 @@ void FemMesh::readAbaqus(const std::string &FileName)
     catch (Py::Exception& e) {
         e.clear();
     }
-    Base::Console().Log("    %f: Done \n",Base::TimeInfo::diffTimeF(Start,Base::TimeInfo()));
+    Base::Console().Log("    {}: Done \n",Base::TimeInfo::diffTimeF(Start,Base::TimeInfo()));
 }
 
 void FemMesh::readZ88(const std::string &FileName)
@@ -1867,7 +1867,7 @@ void FemMesh::readZ88(const std::string &FileName)
     catch (Py::Exception& e) {
         e.clear();
     }
-    Base::Console().Log("    %f: Done \n",Base::TimeInfo::diffTimeF(Start,Base::TimeInfo()));
+    Base::Console().Log("    {}: Done \n",Base::TimeInfo::diffTimeF(Start,Base::TimeInfo()));
 }
 
 void FemMesh::read(const char *FileName)

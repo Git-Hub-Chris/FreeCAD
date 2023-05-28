@@ -1758,8 +1758,8 @@ void ViewProviderMesh::faceInfo(Mesh::FacetIndex uFacet)
     if (uFacet < facets.size()) {
         MeshCore::MeshFacet face = facets[uFacet];
         MeshCore::MeshGeomFacet tria = rKernel.GetFacet(face);
-        Base::Console().Message("Mesh: %s Facet %lu: Points: <%lu, %lu, %lu>, Neighbours: <%lu, %lu, %lu>\n"
-            "Triangle: <[%.6f, %.6f, %.6f], [%.6f, %.6f, %.6f], [%.6f, %.6f, %.6f]>\n", fea->getNameInDocument(), uFacet,
+        Base::Console().Message("Mesh: {} Facet {}: Points: <{}, {}, {}>, Neighbours: <{}, {}, {}>\n"
+            "Triangle: <[{:.6f}, {:.6f}, {:.6f}], [{:.6f}, {:.6f}, {:.6f}], [{:.6f}, {:.6f}, {:.6f}]>\n", fea->getNameInDocument(), uFacet,
             face._aulPoints[0], face._aulPoints[1], face._aulPoints[2],
             face._aulNeighbours[0], face._aulNeighbours[1], face._aulNeighbours[2],
             tria._aclPoints[0].x, tria._aclPoints[0].y, tria._aclPoints[0].z,

@@ -384,7 +384,7 @@ void CmdPartRefineShape::activated(int iMsg)
                 copyVisual("ActiveObject", "PointColor", obj->getNameInDocument());
             }
             catch (const Base::Exception& e) {
-                Base::Console().Warning("%s: %s\n", obj->Label.getValue(), e.what());
+                Base::Console().Warning("{}: {}\n", obj->Label.getValue(), e.what());
             }
         });
         commitCommand();
@@ -454,7 +454,7 @@ void CmdPartDefeaturing::activated(int iMsg)
                           it->getFeatName());
         }
         catch (const Base::Exception& e) {
-            Base::Console().Warning("%s: %s\n", it->getFeatName(), e.what());
+            Base::Console().Warning("{}: {}\n", it->getFeatName(), e.what());
         }
     }
     commitCommand();

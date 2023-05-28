@@ -91,7 +91,7 @@ TechDraw::DrawViewPart* TechDraw::getReferencesFromSelection(ReferenceVector& re
                     references3d.push_back(ref);
                 }
             } else {
-                Base::Console().Message("DV::getRefsFromSel - %s has no shape!\n",
+                Base::Console().Message("DV::getRefsFromSel - {} has no shape!\n",
                                         selItem.getObject()->getNameInDocument());
             }
         }

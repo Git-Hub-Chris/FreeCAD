@@ -87,7 +87,7 @@ void TaskDlgMeshShapeNetgen::clicked(int button)
         }
     }
     catch (const Base::Exception& e) {
-        Base::Console().Warning("FemMeshShapeNetgenObject::execute(): %s\n", e.what());
+        Base::Console().Warning("FemMeshShapeNetgenObject::execute(): {}\n", e.what());
     }
 }
 
@@ -119,7 +119,7 @@ bool TaskDlgMeshShapeNetgen::accept()
         return true;
     }
     catch (const Base::Exception& e) {
-        Base::Console().Warning("TaskDlgMeshShapeNetgen::accept(): %s\n", e.what());
+        Base::Console().Warning("TaskDlgMeshShapeNetgen::accept(): {}\n", e.what());
     }
 
     return false;

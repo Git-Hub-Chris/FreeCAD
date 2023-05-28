@@ -1431,7 +1431,7 @@ Restart:
         }
         catch (Base::Exception& e) {
             Base::Console().DeveloperError(
-                "EditModeConstraintCoinManager", "Exception during draw: %s\n", e.what());
+                "EditModeConstraintCoinManager", "Exception during draw: {}\n", e.what());
             e.ReportException();
         }
         catch (...) {
@@ -2074,7 +2074,7 @@ std::set<int> EditModeConstraintCoinManager::detectPreselectionConstr(const SoPi
                             // Useful code to debug coordinates and bounding boxes that does not
                             // need to be compiled in for any debug operations.
 
-                            /*Base::Console().Log("Abs(%f,%f),Trans(%f,%f),Coords(%d,%d),iCoords(%f,%f),icon(%d,%d),isize(%d,%d),boundingbox([%d,%d],[%d,%d])\n",
+                            /*Base::Console().Log("Abs({},{}),Trans({},{}),Coords({},{}),iCoords({},{}),icon({},{}),isize({},{}),boundingbox([{},{}],[{},{}])\n",
                              * absPos[0],absPos[1],trans[0], trans[1], cursorPos[0], cursorPos[1],
                              * iconCoords[0], iconCoords[1], iconX, iconY, iconSize[0], iconSize[1],
                              * b->first.topLeft().x(),b->first.topLeft().y(),b->first.bottomRight().x(),b->first.bottomRight().y());*/

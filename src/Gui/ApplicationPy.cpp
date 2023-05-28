@@ -603,7 +603,7 @@ PyObject* Application::sOpen(PyObject * /*self*/, PyObject *args)
         FileHandler handler(fileName);
         if (!handler.openFile()) {
             QString ext = handler.extension();
-            Base::Console().Error("File type '%s' not supported\n", ext.toLatin1().constData());
+            Base::Console().Error("File type '{}' not supported\n", ext.toLatin1().constData());
         }
     }
     PY_CATCH;
@@ -626,7 +626,7 @@ PyObject* Application::sInsert(PyObject * /*self*/, PyObject *args)
         FileHandler handler(fileName);
         if (!handler.importFile(std::string(DocName ? DocName : ""))) {
             QString ext = handler.extension();
-            Base::Console().Error("File type '%s' not supported\n", ext.toLatin1().constData());
+            Base::Console().Error("File type '{}' not supported\n", ext.toLatin1().constData());
         }
     } PY_CATCH;
 
@@ -714,7 +714,7 @@ PyObject* Application::sExport(PyObject * /*self*/, PyObject *args)
             }
         }
         else {
-            Base::Console().Error("File type '%s' not supported\n", ext.toLatin1().constData());
+            Base::Console().Error("File type '{}' not supported\n", ext.toLatin1().constData());
         }
     } PY_CATCH;
 
@@ -731,7 +731,7 @@ PyObject* Application::sSendActiveView(PyObject * /*self*/, PyObject *args)
     const char* ppReturn = nullptr;
     if (!Instance->sendMsgToActiveView(psCommandStr,&ppReturn)) {
         if (!Base::asBoolean(suppress))
-            Base::Console().Warning("Unknown view command: %s\n",psCommandStr);
+            Base::Console().Warning("Unknown view command: {}\n",psCommandStr);
     }
 
     // Print the return value to the output
@@ -752,7 +752,7 @@ PyObject* Application::sSendFocusView(PyObject * /*self*/, PyObject *args)
     const char* ppReturn = nullptr;
     if (!Instance->sendMsgToFocusView(psCommandStr,&ppReturn)) {
         if (!Base::asBoolean(suppress))
-            Base::Console().Warning("Unknown view command: %s\n",psCommandStr);
+            Base::Console().Warning("Unknown view command: {}\n",psCommandStr);
     }
 
     // Print the return value to the output

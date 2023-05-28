@@ -519,7 +519,7 @@ void View3DInventorViewer::init()
         this->grabGesture(Qt::PanGesture);
         this->grabGesture(Qt::PinchGesture);
     } catch (Base::Exception &e) {
-        Base::Console().Warning("Failed to set up gestures. Error: %s\n", e.what());
+        Base::Console().Warning("Failed to set up gestures. Error: {}\n", e.what());
     } catch (...) {
         Base::Console().Warning("Failed to set up gestures. Unknown error.\n");
     }
@@ -866,11 +866,11 @@ void View3DInventorViewer::resetEditingRoot(bool updateLinks)
             Py::Object o = Py::type(e);
             if (o.isString()) {
                 Py::String s(o);
-                Base::Console().Warning("%s\n", s.as_std_string("utf-8").c_str());
+                Base::Console().Warning("{}\n", s.as_std_string("utf-8").c_str());
             }
             else {
                 Py::String s(o.repr());
-                Base::Console().Warning("%s\n", s.as_std_string("utf-8").c_str());
+                Base::Console().Warning("{}\n", s.as_std_string("utf-8").c_str());
             }
             // Prints message to console window if we are in interactive mode
             PyErr_Print();
@@ -1716,7 +1716,7 @@ void View3DInventorViewer::interactionFinishCB(void*, SoQTQuarterAdaptor* viewer
  */
 void View3DInventorViewer::interactionLoggerCB(void*, SoAction* action)
 {
-    Base::Console().Log("%s\n", action->getTypeId().getName().getString());
+    Base::Console().Log("{}\n", action->getTypeId().getName().getString());
 }
 
 void View3DInventorViewer::addGraphicsItem(GLGraphicsItem* item)

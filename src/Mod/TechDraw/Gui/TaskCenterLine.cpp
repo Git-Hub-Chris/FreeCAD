@@ -113,7 +113,7 @@ TaskCenterLine::TaskCenterLine(TechDraw::DrawViewPart* partFeat,
     } else if (geomType == "Vertex") {
         m_type = 2;
     } else {
-        Base::Console().Error("TaskCenterLine - unknown geometry type: %s.  Can not proceed.\n", geomType.c_str());
+        Base::Console().Error("TaskCenterLine - unknown geometry type: {}.  Can not proceed.\n", geomType.c_str());
         return;
     }
 

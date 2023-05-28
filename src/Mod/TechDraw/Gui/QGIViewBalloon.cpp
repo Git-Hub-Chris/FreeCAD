@@ -306,7 +306,7 @@ QVariant QGIViewBalloon::itemChange(GraphicsItemChange change, const QVariant& v
 //Set selection state for this and it's children
 void QGIViewBalloon::setGroupSelection(bool isSelected)
 {
-    //    Base::Console().Message("QGIVB::setGroupSelection(%d)\n", b);
+    //    Base::Console().Message("QGIVB::setGroupSelection({})\n", b);
     setSelected(isSelected);
     balloonLabel->setSelected(isSelected);
     balloonLines->setSelected(isSelected);
@@ -315,7 +315,7 @@ void QGIViewBalloon::setGroupSelection(bool isSelected)
 
 void QGIViewBalloon::select(bool state)
 {
-    //    Base::Console().Message("QGIVBall::select(%d)\n", state);
+    //    Base::Console().Message("QGIVBall::select({})\n", state);
     setSelected(state);
     draw();
 }
@@ -500,7 +500,7 @@ void QGIViewBalloon::balloonLabelDragFinished()
 //from QGVP::mouseReleaseEvent - pos = eventPos in scene coords?
 void QGIViewBalloon::placeBalloon(QPointF pos)
 {
-    //    Base::Console().Message("QGIVB::placeBalloon(%s)\n",
+    //    Base::Console().Message("QGIVB::placeBalloon({})\n",
     //                            DrawUtil::formatVector(pos).c_str());
     auto balloon(dynamic_cast<TechDraw::DrawViewBalloon*>(getViewObject()));
     if (!balloon) {
@@ -567,7 +567,7 @@ void QGIViewBalloon::draw()
 
 void QGIViewBalloon::drawBalloon(bool dragged)
 {
-    //    Base::Console().Message("QGIVB::drawBalloon(%d)\n", dragged);
+    //    Base::Console().Message("QGIVB::drawBalloon({})\n", dragged);
     if (!isVisible()) {
         return;
     }

@@ -329,7 +329,7 @@ bool QGSPage::addView(const App::DocumentObject* obj)
 
 bool QGSPage::attachView(App::DocumentObject* obj)
 {
-    //    Base::Console().Message("QGSP::attachView(%s)\n", obj->getNameInDocument());
+    //    Base::Console().Message("QGSP::attachView({})\n", obj->getNameInDocument());
     QGIView* existing = findQViewForDocObj(obj);
     if (existing)
         return true;
@@ -390,7 +390,7 @@ bool QGSPage::attachView(App::DocumentObject* obj)
 
 QGIView* QGSPage::addViewPart(TechDraw::DrawViewPart* partFeat)
 {
-    //    Base::Console().Message("QGSP::addViewPart(%s)\n", part->getNameInDocument());
+    //    Base::Console().Message("QGSP::addViewPart({})\n", part->getNameInDocument());
     auto viewPart(new QGIViewPart);
 
     viewPart->setViewPartFeature(partFeat);
@@ -489,7 +489,7 @@ QGIView* QGSPage::addDrawViewImage(TechDraw::DrawViewImage* imageFeat)
 
 QGIView* QGSPage::addViewBalloon(TechDraw::DrawViewBalloon* balloonFeat)
 {
-    //    Base::Console().Message("QGSP::addViewBalloon(%s)\n", balloonFeat->getNameInDocument());
+    //    Base::Console().Message("QGSP::addViewBalloon({})\n", balloonFeat->getNameInDocument());
     auto vBalloon(new QGIViewBalloon);
 
     addItem(vBalloon);
@@ -521,7 +521,7 @@ void QGSPage::addBalloonToParent(QGIViewBalloon* balloon, QGIView* parent)
 //origin is in scene coordinates from QGViewPage
 void QGSPage::createBalloon(QPointF origin, DrawView* parent)
 {
-    //    Base::Console().Message("QGSP::createBalloon(%s)\n", DrawUtil::formatVector(origin).c_str());
+    //    Base::Console().Message("QGSP::createBalloon({})\n", DrawUtil::formatVector(origin).c_str());
     std::string featName = getDrawPage()->getDocument()->getUniqueObjectName("Balloon");
     std::string pageName = getDrawPage()->getNameInDocument();
 
@@ -593,7 +593,7 @@ void QGSPage::addDimToParent(QGIViewDimension* dim, QGIView* parent)
 
 QGIView* QGSPage::addViewLeader(TechDraw::DrawLeaderLine* leaderFeat)
 {
-    //    Base::Console().Message("QGSP::addViewLeader(%s)\n", leader->getNameInDocument());
+    //    Base::Console().Message("QGSP::addViewLeader({})\n", leader->getNameInDocument());
     QGILeaderLine* leaderGroup = new QGILeaderLine();
     addItem(leaderGroup);
 
@@ -739,7 +739,7 @@ void QGSPage::setRichAnnoGroups(void)
 //! find the graphic for a DocumentObject
 QGIView* QGSPage::findQViewForDocObj(App::DocumentObject* obj) const
 {
-    //    Base::Console().Message("QGSP::findQViewForDocObj(%s)\n", obj->getNameInDocument());
+    //    Base::Console().Message("QGSP::findQViewForDocObj({})\n", obj->getNameInDocument());
     if (obj) {
         const std::vector<QGIView*> qviews = getViews();
         for (std::vector<QGIView*>::const_iterator it = qviews.begin(); it != qviews.end(); ++it) {
@@ -770,7 +770,7 @@ QGIView* QGSPage::getQGIVByName(std::string name)
 //find the parent of a QGIV based on the corresponding feature's parentage
 QGIView* QGSPage::findParent(QGIView* view) const
 {
-    //    Base::Console().Message("QGSP::findParent(%s)\n", view->getViewName());
+    //    Base::Console().Message("QGSP::findParent({})\n", view->getViewName());
     const std::vector<QGIView*> qviews = getViews();
     TechDraw::DrawView* myFeat = view->getViewObject();
 
@@ -1031,7 +1031,7 @@ bool QGSPage::orphanExists(const char* viewName, const std::vector<App::Document
 //NOTE: this doesn't add missing views.  see fixOrphans()
 void QGSPage::redrawAllViews()
 {
-    //    Base::Console().Message("QGSP::redrawAllViews() - views: %d\n", getViews().size());
+    //    Base::Console().Message("QGSP::redrawAllViews() - views: {}\n", getViews().size());
     const std::vector<QGIView*>& upviews = getViews();
     for (std::vector<QGIView*>::const_iterator it = upviews.begin(); it != upviews.end(); ++it) {
         (*it)->updateView(true);
@@ -1253,7 +1253,7 @@ void QGSPage::postProcessXml(QTemporaryFile& temporaryFile, QString fileName, QS
     // Time to save our product
     QFile outFile(fileName);
     if (!outFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        Base::Console().Error("QGSP::ppxml - failed to open file for writing: %s\n",
+        Base::Console().Error("QGSP::ppxml - failed to open file for writing: {}\n",
                               qPrintable(fileName));
     }
 

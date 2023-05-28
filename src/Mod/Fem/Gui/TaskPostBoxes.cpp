@@ -415,7 +415,7 @@ TaskPostDisplay::TaskPostDisplay(Gui::ViewProviderDocumentObject* view, QWidget*
 
     // get Tranparency from ViewProvider
     int trans = getTypedView<ViewProviderFemPostObject>()->Transparency.getValue();
-    Base::Console().Log("Transparency %i: \n", trans);
+    Base::Console().Log("Transparency {}: \n", trans);
     // sync the trancparency slider
     ui->Transparency->setValue(trans);
     ui->Transparency->setToolTip(QString::number(trans) + QString::fromLatin1(" %"));
@@ -1208,7 +1208,7 @@ void TaskPostDataAtPoint::showValue(double pointValue, const char* unitStr)
     QString posZ = ui->centerZ->text();
 
     QString result = tr("%1 at (%2; %3; %4) is: %5 %6").arg(field, posX, posY, posZ, value, unit);
-    Base::Console().Message("%s\n", result.toUtf8().data());
+    Base::Console().Message("{}\n", result.toUtf8().data());
 }
 
 std::string TaskPostDataAtPoint::toString(double val) const
@@ -1848,7 +1848,7 @@ TaskPostWarpVector::TaskPostWarpVector(ViewProviderDocumentObject* view, QWidget
         (warp_factor - ui->Min->value()) / (ui->Max->value() - ui->Min->value()) * 100.;
     ui->Slider->setValue(slider_value);
     ui->Slider->blockSignals(false);
-    Base::Console().Log("init: warp_factor, slider_value: %f, %i: \n", warp_factor, slider_value);
+    Base::Console().Log("init: warp_factor, slider_value: {}, {}: \n", warp_factor, slider_value);
 }
 
 TaskPostWarpVector::~TaskPostWarpVector()
@@ -1907,7 +1907,7 @@ void TaskPostWarpVector::onSliderValueChanged(int slider_value)
     ui->Value->blockSignals(true);
     ui->Value->setValue(warp_factor);
     ui->Value->blockSignals(false);
-    Base::Console().Log("Change: warp_factor, slider_value: %f, %i: \n", warp_factor, slider_value);
+    Base::Console().Log("Change: warp_factor, slider_value: {}, {}: \n", warp_factor, slider_value);
 }
 
 void TaskPostWarpVector::onValueValueChanged(double warp_factor)
@@ -1926,7 +1926,7 @@ void TaskPostWarpVector::onValueValueChanged(double warp_factor)
         (warp_factor - ui->Min->value()) / (ui->Max->value() - ui->Min->value()) * 100.;
     ui->Slider->setValue(slider_value);
     ui->Slider->blockSignals(false);
-    Base::Console().Log("Change: warp_factor, slider_value: %f, %i: \n", warp_factor, slider_value);
+    Base::Console().Log("Change: warp_factor, slider_value: {}, {}: \n", warp_factor, slider_value);
 }
 
 void TaskPostWarpVector::onMaxValueChanged(double)
@@ -1962,7 +1962,7 @@ void TaskPostWarpVector::onMaxValueChanged(double)
         ui->Value->blockSignals(true);
         ui->Value->setValue(warp_factor);
         ui->Value->blockSignals(false);
-    Base::Console().Log("Change: warp_factor, slider_value: %f, %i: \n", warp_factor, slider_value);
+    Base::Console().Log("Change: warp_factor, slider_value: {}, {}: \n", warp_factor, slider_value);
     }
     */
 }

@@ -98,7 +98,7 @@ void DrawSVGTemplate::onChanged(const App::Property* prop)
 //While parsing, note the Orientation, Width and Height values in the Svg code.
 QString DrawSVGTemplate::processTemplate()
 {
-//    Base::Console().Message("DSVGT::processTemplate() - isRestoring: %d\n", isRestoring());
+//    Base::Console().Message("DSVGT::processTemplate() - isRestoring: {}\n", isRestoring());
     if (isRestoring()) {
         //until everything is fully restored, the embedded file is not available, so we
         //can't do anything
@@ -107,13 +107,13 @@ QString DrawSVGTemplate::processTemplate()
 
     QFile templateFile(Base::Tools::fromStdString(PageResult.getValue()));
     if (!templateFile.open(QIODevice::ReadOnly)) {
-        Base::Console().Error("DrawSVGTemplate::processTemplate can't read embedded template %s!\n", PageResult.getValue());
+        Base::Console().Error("DrawSVGTemplate::processTemplate can't read embedded template {}!\n", PageResult.getValue());
         return QString();
     }
 
     QDomDocument templateDocument;
     if (!templateDocument.setContent(&templateFile)) {
-        Base::Console().Error("DrawSVGTemplate::processTemplate - failed to parse file: %s\n",
+        Base::Console().Error("DrawSVGTemplate::processTemplate - failed to parse file: {}\n",
             PageResult.getValue());
         return QString();
     }
@@ -183,7 +183,7 @@ double DrawSVGTemplate::getHeight() const
 
 void DrawSVGTemplate::replaceFileIncluded(std::string newTemplateFileName)
 {
-//    Base::Console().Message("DSVGT::replaceFileIncluded(%s)\n", newTemplateFileName.c_str());
+//    Base::Console().Message("DSVGT::replaceFileIncluded({})\n", newTemplateFileName.c_str());
     if (newTemplateFileName.empty()) {
         return;
     }
@@ -212,20 +212,20 @@ std::map<std::string, std::string> DrawSVGTemplate::getEditableTextsFromTemplate
         tfi.setFile(App::Application::getResourceDir() + "Mod/Drawing/Templates/" + tfi.fileName());
         // try the redirect
         if (!tfi.isReadable()) {
-            Base::Console().Error("DrawSVGTemplate::getEditableTextsFromTemplate() not able to open %s!\n", Template.getValue());
+            Base::Console().Error("DrawSVGTemplate::getEditableTextsFromTemplate() not able to open {}!\n", Template.getValue());
             return editables;
         }
     }
 
     QFile templateFile(QString::fromUtf8(tfi.filePath().c_str()));
     if (!templateFile.open(QIODevice::ReadOnly)) {
-        Base::Console().Error("DrawSVGTemplate::getEditableTextsFromTemplate() can't read template %s!\n", Template.getValue());
+        Base::Console().Error("DrawSVGTemplate::getEditableTextsFromTemplate() can't read template {}!\n", Template.getValue());
         return editables;
     }
 
     QDomDocument templateDocument;
     if (!templateDocument.setContent(&templateFile)) {
-        Base::Console().Message("DrawSVGTemplate::getEditableTextsFromTemplate() - failed to parse file: %s\n",
+        Base::Console().Message("DrawSVGTemplate::getEditableTextsFromTemplate() - failed to parse file: {}\n",
                                 Template.getValue());
         return editables;
     }

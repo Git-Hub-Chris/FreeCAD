@@ -186,7 +186,7 @@ void ButtonModel::load3DConnexionButtons(const char *RequiredDeviceName)
    catch (const std::exception& e)
    {
       // We don't mind not finding the file to be opened
-      Base::Console().Warning("%s\n", e.what());
+      Base::Console().Warning("{}\n", e.what());
    }
 }
 
@@ -908,7 +908,7 @@ QStringList DlgCustomizeSpaceball::getModels()
     catch (const std::exception& e)
     {
        // We don't mind not finding the file to be opened
-       Base::Console().Warning("%s\n", e.what());
+       Base::Console().Warning("{}\n", e.what());
     }
 
     return modelList;

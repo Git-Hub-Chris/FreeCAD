@@ -188,7 +188,7 @@ void TaskPolarPatternParameters::setupUI()
             vpOrigin = static_cast<ViewProviderOrigin*>(Gui::Application::Instance->getViewProvider(origin));
             vpOrigin->setTemporaryVisibility(true, false);
         } catch (const Base::Exception &ex) {
-            Base::Console().Error ("%s\n", ex.what () );
+            Base::Console().Error ("{}\n", ex.what () );
         }
     }
 
@@ -409,7 +409,7 @@ TaskPolarPatternParameters::~TaskPolarPatternParameters()
             vpOrigin->resetTemporaryVisibility ();
         }
     } catch (const Base::Exception &ex) {
-        Base::Console().Error ("%s\n", ex.what () );
+        Base::Console().Error ("{}\n", ex.what () );
     }
 
     if (proxy)

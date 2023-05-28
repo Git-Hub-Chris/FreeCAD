@@ -129,7 +129,7 @@ void ViewProviderOrigin::setTemporaryVisibility(bool axis, bool plane) {
             }
         }
     } catch (const Base::Exception &ex) {
-        Base::Console().Error ("%s\n", ex.what() );
+        Base::Console().Error ("{}\n", ex.what() );
     }
 
     // Remember & Set self visibility
@@ -196,7 +196,7 @@ void ViewProviderOrigin::onChanged(const App::Property* prop) {
             // cannot be found.
             App::Document* doc = getObject()->getDocument();
             if (!doc->testStatus(App::Document::Restoring))
-                Base::Console().Error ("%s\n", ex.what() );
+                Base::Console().Error ("{}\n", ex.what() );
         }
     }
 

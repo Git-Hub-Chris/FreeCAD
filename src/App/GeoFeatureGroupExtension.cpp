@@ -419,12 +419,12 @@ bool GeoFeatureGroupExtension::areLinksValid(const DocumentObject* obj) {
         return true;
 
     //no cross CS link for local links.
-    //Base::Console().Message("Check object links: %s\n", obj->getNameInDocument());
+    //Base::Console().Message("Check object links: {}\n", obj->getNameInDocument());
     std::vector<App::Property*> list;
     obj->getPropertyList(list);
     for(App::Property* prop : list) {
         if(!isLinkValid(prop)) {
-            //Base::Console().Message("Invalid link: %s\n", prop->getName());
+            //Base::Console().Message("Invalid link: {}\n", prop->getName());
             return false;
         }
     }

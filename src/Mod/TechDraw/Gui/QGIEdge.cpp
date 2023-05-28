@@ -54,7 +54,7 @@ QGIEdge::QGIEdge(int index) :
 //NOTE this refers to Qt cosmetic lines
 void QGIEdge::setCosmetic(bool state)
 {
-//    Base::Console().Message("QGIE::setCosmetic(%d)\n", state);
+//    Base::Console().Message("QGIE::setCosmetic({})\n", state);
     isCosmetic = state;
     if (state) {
         setWidth(0.0);

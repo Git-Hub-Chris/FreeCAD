@@ -819,7 +819,7 @@ void AttachEngine::readLinks(const App::PropertyLinkSubList &references,
             storage.push_back(myShape);
             shapes[i] = &(storage[storage.size()-1]);
         } else {
-            Base::Console().Warning("Attacher: linked object %s is unexpected, assuming it has no shape.\n",geof->getNameInDocument());
+            Base::Console().Warning("Attacher: linked object {} is unexpected, assuming it has no shape.\n",geof->getNameInDocument());
             storage.emplace_back();
             shapes[i] = &(storage[storage.size()-1]);
         }
@@ -1286,7 +1286,7 @@ Base::Placement AttachEngine3D::calculateAttachedPlacement(const Base::Placement
             } catch (Standard_Failure &e){
                 //ignore. This is brobably due to insufficient continuity.
                 dd = gp_Vec(0., 0., 0.);
-                Base::Console().Warning("AttachEngine3D::calculateAttachedPlacement: can't calculate second derivative of curve. OCC error: %s\n", e.GetMessageString());
+                Base::Console().Warning("AttachEngine3D::calculateAttachedPlacement: can't calculate second derivative of curve. OCC error: {}\n", e.GetMessageString());
             }
 
             gp_Vec T,N,B;//Frenet?Serret axes: tangent, normal, binormal
@@ -1902,7 +1902,7 @@ Base::Placement AttachEngineLine::calculateAttachedPlacement(const Base::Placeme
             if (!distancer.IsDone())
                 throw Base::ValueError("AttachEngineLine::calculateAttachedPlacement: proximity calculation failed.");
             if (distancer.NbSolution()>1)
-                Base::Console().Warning("AttachEngineLine::calculateAttachedPlacement: proximity calculation gave %i solutions, ambiguous.\n",int(distancer.NbSolution()));
+                Base::Console().Warning("AttachEngineLine::calculateAttachedPlacement: proximity calculation gave {} solutions, ambiguous.\n",int(distancer.NbSolution()));
             gp_Pnt p1 = distancer.PointOnShape1(1);
             gp_Pnt p2 = distancer.PointOnShape2(1);
             LineBasePoint = p1;
@@ -2156,7 +2156,7 @@ gp_Pnt AttachEnginePoint::getProximityPoint(eMapMode mmode, const TopoDS_Shape& 
             }
 
             if (points.size() > 1)
-                Base::Console().Warning("AttachEnginePoint::calculateAttachedPlacement: proximity calculation gave %d solutions, ambiguous.\n", int(points.size()));
+                Base::Console().Warning("AttachEnginePoint::calculateAttachedPlacement: proximity calculation gave {} solutions, ambiguous.\n", int(points.size()));
 
             // if an intersection is found return the first hit
             // otherwise continue with BRepExtrema_DistShapeShape
@@ -2172,7 +2172,7 @@ gp_Pnt AttachEnginePoint::getProximityPoint(eMapMode mmode, const TopoDS_Shape& 
     if (!distancer.IsDone())
         throw Base::ValueError("AttachEnginePoint::calculateAttachedPlacement: proximity calculation failed.");
     if (distancer.NbSolution() > 1)
-        Base::Console().Warning("AttachEnginePoint::calculateAttachedPlacement: proximity calculation gave %i solutions, ambiguous.\n",int(distancer.NbSolution()));
+        Base::Console().Warning("AttachEnginePoint::calculateAttachedPlacement: proximity calculation gave {} solutions, ambiguous.\n",int(distancer.NbSolution()));
 
     gp_Pnt p1 = distancer.PointOnShape1(1);
     gp_Pnt p2 = distancer.PointOnShape2(1);

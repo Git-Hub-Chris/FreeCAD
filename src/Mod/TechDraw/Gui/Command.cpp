@@ -473,7 +473,7 @@ CmdTechDrawSectionGroup::CmdTechDrawSectionGroup() : Command("TechDraw_SectionGr
 
 void CmdTechDrawSectionGroup::activated(int iMsg)
 {
-    //    Base::Console().Message("CMD::SectionGrp - activated(%d)\n", iMsg);
+    //    Base::Console().Message("CMD::SectionGrp - activated({})\n", iMsg);
     Gui::TaskView::TaskDialog* dlg = Gui::Control().activeDialog();
     if (dlg) {
         QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Task In Progress"),
@@ -491,7 +491,7 @@ void CmdTechDrawSectionGroup::activated(int iMsg)
             execComplexSection(this);
             break;
         default:
-            Base::Console().Message("CMD::SectionGrp - invalid iMsg: %d\n", iMsg);
+            Base::Console().Message("CMD::SectionGrp - invalid iMsg: {}\n", iMsg);
     };
 }
 

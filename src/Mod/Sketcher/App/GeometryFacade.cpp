@@ -34,14 +34,14 @@ using namespace Sketcher;
 TYPESYSTEM_SOURCE(Sketcher::GeometryFacade, Base::BaseClass)
 
 GeometryFacade::GeometryFacade()
-    : Geo(nullptr),
-      OwnerGeo(false),
-      SketchGeoExtension(nullptr)
+    : Geo(nullptr)
+    , OwnerGeo(false)
+    , SketchGeoExtension(nullptr)
 {}
 
 GeometryFacade::GeometryFacade(const Part::Geometry* geometry, bool owner)
-    : Geo(geometry),
-      OwnerGeo(owner)
+    : Geo(geometry)
+    , OwnerGeo(owner)
 {
     assert(geometry);// This should never be nullptr, as this constructor is protected
 
@@ -90,7 +90,7 @@ void GeometryFacade::initExtension()
 
         getGeo()->setExtension(std::make_unique<SketchGeometryExtension>());// Create getExtension
 
-        // Base::Console().Warning("%s\nSketcher Geometry without Extension: %s \n",
+        // Base::Console().Warning("{}\nSketcher Geometry without Extension: {} \n",
         // boost::uuids::to_string(Geo->getTag()).c_str());
     }
 

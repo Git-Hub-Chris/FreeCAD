@@ -191,7 +191,7 @@ TopoDS_Shape DrawComplexSection::makeCuttingTool(double dMax)
     bool isPositionOK = validateProfilePosition(profileWire, sectionCS, gClosestBasis);
     if (!isPositionOK) {
         //profile is not in a good position.  Result might not be right.
-        Base::Console().Warning("DCS::makeCuttingTool - %s - profile is outside shape box\n",
+        Base::Console().Warning("DCS::makeCuttingTool - {} - profile is outside shape box\n",
                                 getNameInDocument());
     }
 
@@ -259,7 +259,7 @@ TopoDS_Shape DrawComplexSection::getShapeToPrepare() const
 //get the shape ready for projection and cut surface finding
 TopoDS_Shape DrawComplexSection::prepareShape(const TopoDS_Shape& cutShape, double shapeSize)
 {
-    //    Base::Console().Message("DCS::prepareShape() - strategy: %d\n", ProjectionStrategy.getValue());
+    //    Base::Console().Message("DCS::prepareShape() - strategy: {}\n", ProjectionStrategy.getValue());
     if (ProjectionStrategy.getValue() == 0) {
         //Offset. Use regular section behaviour
         return DrawViewSection::prepareShape(cutShape, shapeSize);
@@ -284,7 +284,7 @@ TopoDS_Shape DrawComplexSection::prepareShape(const TopoDS_Shape& cutShape, doub
 
 void DrawComplexSection::makeSectionCut(const TopoDS_Shape& baseShape)
 {
-    //    Base::Console().Message("DCS::makeSectionCut() - %s - baseShape.IsNull: %d\n",
+    //    Base::Console().Message("DCS::makeSectionCut() - {} - baseShape.IsNull: {}\n",
     //                            getNameInDocument(), baseShape.IsNull());
     if (ProjectionStrategy.getValue() == 0) {
         //Offset. Use regular section behaviour
@@ -314,7 +314,7 @@ void DrawComplexSection::makeSectionCut(const TopoDS_Shape& baseShape)
 
 void DrawComplexSection::onSectionCutFinished()
 {
-    //    Base::Console().Message("DCS::onSectionCutFinished() - %s - cut: %d align: %d\n",
+    //    Base::Console().Message("DCS::onSectionCutFinished() - {} - cut: {} align: {}\n",
     //                            getNameInDocument(), m_cutFuture.isRunning(), m_alignFuture.isRunning());
     if (m_cutFuture.isRunning() ||  //waitingForCut()
         m_alignFuture.isRunning()) {//waitingForAlign()
@@ -331,7 +331,7 @@ void DrawComplexSection::onSectionCutFinished()
 //TODO: this process should replace the "makeSectionCut" from DVS
 void DrawComplexSection::makeAlignedPieces(const TopoDS_Shape& rawShape)
 {
-    //    Base::Console().Message("DCS::makeAlignedPieces() - rawShape.isNull: %d\n", rawShape.IsNull());
+    //    Base::Console().Message("DCS::makeAlignedPieces() - rawShape.isNull: {}\n", rawShape.IsNull());
 
     if (!canBuild(getSectionCS(), CuttingToolWireObject.getValue())) {
         throw Base::RuntimeError("Profile is parallel to Section Normal");
@@ -537,10 +537,10 @@ void DrawComplexSection::makeAlignedPieces(const TopoDS_Shape& rawShape)
 TopoDS_Compound
 DrawComplexSection::findSectionPlaneIntersections(const TopoDS_Shape& shapeToIntersect)
 {
-    //    Base::Console().Message("DCS::findSectionPlaneIntersections() - %s\n", getNameInDocument());
+    //    Base::Console().Message("DCS::findSectionPlaneIntersections() - {}\n", getNameInDocument());
     if (shapeToIntersect.IsNull()) {
         // this shouldn't happen
-        Base::Console().Warning("DCS::findSectionPlaneInter - %s - cut shape is Null\n",
+        Base::Console().Warning("DCS::findSectionPlaneInter - {} - cut shape is Null\n",
                                 getNameInDocument());
         return TopoDS_Compound();
     }
@@ -630,7 +630,7 @@ TopoDS_Compound DrawComplexSection::alignedToolIntersections(const TopoDS_Shape&
 
 TopoDS_Compound DrawComplexSection::alignSectionFaces(TopoDS_Shape faceIntersections)
 {
-    //    Base::Console().Message("DCS::alignSectionFaces() - faceIntersections.null: %d\n", faceIntersections.IsNull());
+    //    Base::Console().Message("DCS::alignSectionFaces() - faceIntersections.null: {}\n", faceIntersections.IsNull());
     if (ProjectionStrategy.getValue() == 0) {
         //Offset. Use regular section behaviour
         return DrawViewSection::alignSectionFaces(faceIntersections);
@@ -823,7 +823,7 @@ TopoDS_Wire DrawComplexSection::makeSectionLineWire()
         }
         else {
             //probably can't happen as cut profile has been checked before this
-            Base::Console().Message("DCS::makeSectionLineGeometry - profile is type: %d\n",
+            Base::Console().Message("DCS::makeSectionLineGeometry - profile is type: {}\n",
                                     static_cast<int>(sScaled.ShapeType()));
             return TopoDS_Wire();
         }
@@ -911,7 +911,7 @@ gp_Vec DrawComplexSection::projectVector(const gp_Vec& vec) const
 //TODO: centralize all the projection routines scattered around the module!
 gp_Vec DrawComplexSection::projectVector(const gp_Vec& vec, gp_Ax2 sectionCS)
 {
-    //    Base::Console().Message("DCS::projectVector(%s, CS)\n", DU::formatVector(vec).c_str());
+    //    Base::Console().Message("DCS::projectVector({}, CS)\n", DU::formatVector(vec).c_str());
     HLRAlgo_Projector projector(sectionCS);
     gp_Pnt2d prjPnt;
     projector.Project(gp_Pnt(vec.XYZ()), prjPnt);

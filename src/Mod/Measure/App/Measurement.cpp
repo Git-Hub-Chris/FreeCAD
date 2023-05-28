@@ -193,7 +193,7 @@ MeasureType Measurement::getType()
 
 TopoDS_Shape Measurement::getShape(App::DocumentObject *obj , const char *subName) const
 {
-//    Base::Console().Message("Meas::getShape(%s, %s)\n", obj->getNameInDocument(), subName);
+//    Base::Console().Message("Meas::getShape({}, {})\n", obj->getNameInDocument(), subName);
     //temporary fix to get "Vertex7" from "Body003.Pocket020.Vertex7"
     //when selected, Body features are provided as featureName and subNameAndIndex
     //other sources provide the full extended name with index

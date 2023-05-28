@@ -91,7 +91,7 @@ std::vector<TopoDS_Shape> ShapeExtractor::getShapes2d(const std::vector<App::Doc
 
 TopoDS_Shape ShapeExtractor::getShapes(const std::vector<App::DocumentObject*> links)
 {
-//    Base::Console().Message("SE::getShapes() - links in: %d\n", links.size());
+//    Base::Console().Message("SE::getShapes() - links in: {}\n", links.size());
     std::vector<TopoDS_Shape> sourceShapes;
 
     for (auto& l:links) {
@@ -148,7 +148,7 @@ TopoDS_Shape ShapeExtractor::getShapes(const std::vector<App::DocumentObject*> l
 
 std::vector<TopoDS_Shape> ShapeExtractor::getXShapes(const App::Link* xLink)
 {
-//    Base::Console().Message("SE::getXShapes() - %s\n", xLink->getNameInDocument());
+//    Base::Console().Message("SE::getXShapes() - {}\n", xLink->getNameInDocument());
     std::vector<TopoDS_Shape> xSourceShapes;
     if (!xLink) {
         return xSourceShapes;
@@ -242,7 +242,7 @@ TopoDS_Shape ShapeExtractor::getShapeFromXLink(const App::Link* xLink)
             }
         }
         catch (...) {
-            Base::Console().Error("ShapeExtractor failed to retrieve shape from %s\n", xLink->getNameInDocument());
+            Base::Console().Error("ShapeExtractor failed to retrieve shape from {}\n", xLink->getNameInDocument());
             return TopoDS_Shape();
         }
         return ts.getShape();
@@ -252,7 +252,7 @@ TopoDS_Shape ShapeExtractor::getShapeFromXLink(const App::Link* xLink)
 
 std::vector<TopoDS_Shape> ShapeExtractor::getShapesFromObject(const App::DocumentObject* docObj)
 {
-//    Base::Console().Message("SE::getShapesFromObject(%s)\n", docObj->getNameInDocument());
+//    Base::Console().Message("SE::getShapesFromObject({})\n", docObj->getNameInDocument());
     std::vector<TopoDS_Shape> result;
 
     const App::GroupExtension* gex = dynamic_cast<const App::GroupExtension*>(docObj);
@@ -270,11 +270,11 @@ std::vector<TopoDS_Shape> ShapeExtractor::getShapesFromObject(const App::Documen
             }
         }
         catch (Standard_Failure& e) {
-            Base::Console().Error("ShapeExtractor - %s encountered OCC error: %s \n", docObj->getNameInDocument(), e.GetMessageString());
+            Base::Console().Error("ShapeExtractor - {} encountered OCC error: {} \n", docObj->getNameInDocument(), e.GetMessageString());
             return result;
         }
         catch (...) {
-            Base::Console().Error("ShapeExtractor failed to retrieve shape from %s\n", docObj->getNameInDocument());
+            Base::Console().Error("ShapeExtractor failed to retrieve shape from {}\n", docObj->getNameInDocument());
             return result;
         }
 
@@ -388,7 +388,7 @@ bool ShapeExtractor::isEdgeType(App::DocumentObject* obj)
 
 bool ShapeExtractor::isPointType(App::DocumentObject* obj)
 {
-//    Base::Console().Message("SE::isPointType(%s)\n", obj->getNameInDocument());
+//    Base::Console().Message("SE::isPointType({})\n", obj->getNameInDocument());
     if (obj) {
         Base::Type t = obj->getTypeId();
         if (t.isDerivedFrom(Part::Vertex::getClassTypeId())) {
@@ -407,7 +407,7 @@ bool ShapeExtractor::isDraftPoint(App::DocumentObject* obj)
     App::PropertyPythonObject* proxy = dynamic_cast<App::PropertyPythonObject*>(obj->getPropertyByName("Proxy"));
     if (proxy) {
         std::string  pp = proxy->toString();
-//        Base::Console().Message("SE::isDraftPoint - pp: %s\n", pp.c_str());
+//        Base::Console().Message("SE::isDraftPoint - pp: {}\n", pp.c_str());
         if (pp.find("Point") != std::string::npos) {
             return true;
         }
@@ -436,7 +436,7 @@ Base::Vector3d ShapeExtractor::getLocation3dFromFeat(App::DocumentObject* obj)
         }
     }
 
-//    Base::Console().Message("SE::getLocation3dFromFeat - returns: %s\n",
+//    Base::Console().Message("SE::getLocation3dFromFeat - returns: {}\n",
 //                            DrawUtil::formatVector(result).c_str());
     return Base::Vector3d(0.0, 0.0, 0.0);
 }
