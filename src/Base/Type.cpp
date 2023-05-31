@@ -112,7 +112,7 @@ void Type::importModule(const char* TypeName)
     if (pos == loadModuleSet.end()) {
       Interpreter().loadModule(Mod.c_str());
 #ifdef FC_LOGLOADMODULE
-      Console().Log("Act: Module %s loaded through class %s \n",Mod.c_str(),TypeName);
+      Console().Log("Act: Module {} loaded through class {} \n",Mod.c_str(),TypeName);
 #endif
       loadModuleSet.insert(Mod);
     }

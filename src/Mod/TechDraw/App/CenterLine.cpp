@@ -159,7 +159,7 @@ CenterLine* CenterLine::CenterLineBuilder(DrawViewPart* partFeat,
                                           int mode,
                                           bool flip)
 {
-//    Base::Console().Message("CL::CLBuilder()\n - subNames: %d", subNames.size());
+//    Base::Console().Message("CL::CLBuilder()\n - subNames: {}", subNames.size());
     std::pair<Base::Vector3d, Base::Vector3d> ends;
     std::vector<std::string> faces;
     std::vector<std::string> edges;
@@ -193,7 +193,7 @@ CenterLine* CenterLine::CenterLineBuilder(DrawViewPart* partFeat,
         verts = subNames;
     }
     if ((ends.first).IsEqual(ends.second, Precision::Confusion())) {
-        Base::Console().Warning("CenterLineBuilder - endpoints are equal: %s\n",
+        Base::Console().Warning("CenterLineBuilder - endpoints are equal: {}\n",
                               DrawUtil::formatVector(ends.first).c_str());
         Base::Console().Warning("CenterLineBuilder - check V/H/A and/or Flip parameters\n");
         return nullptr;
@@ -212,7 +212,7 @@ CenterLine* CenterLine::CenterLineBuilder(DrawViewPart* partFeat,
 
 TechDraw::BaseGeomPtr CenterLine::scaledGeometry(TechDraw::DrawViewPart* partFeat)
 {
-//    Base::Console().Message("CL::scaledGeometry() - m_type: %d\n", m_type);
+//    Base::Console().Message("CL::scaledGeometry() - m_type: {}\n", m_type);
     double scale = partFeat->getScale();
     std::pair<Base::Vector3d, Base::Vector3d> ends;
     try {
@@ -303,8 +303,8 @@ std::string CenterLine::toString() const
 
 void CenterLine::dump(const char* title)
 {
-    Base::Console().Message("CL::dump - %s \n", title);
-    Base::Console().Message("CL::dump - %s \n", toString().c_str());
+    Base::Console().Message("CL::dump - {} \n", title);
+    Base::Console().Message("CL::dump - {} \n", toString().c_str());
 }
 
 std::tuple<Base::Vector3d, Base::Vector3d> CenterLine::rotatePointsAroundMid(Base::Vector3d p1, Base::Vector3d p2, Base::Vector3d mid, double rotate) {
@@ -474,7 +474,7 @@ std::pair<Base::Vector3d, Base::Vector3d> CenterLine::calcEndPoints2Lines(DrawVi
 {
     Q_UNUSED(flip)
 
-//    Base::Console().Message("CL::calc2Lines() - mode: %d flip: %d edgeNames: %d\n", mode, flip, edgeNames.size());
+//    Base::Console().Message("CL::calc2Lines() - mode: {} flip: {} edgeNames: {}\n", mode, flip, edgeNames.size());
     std::pair<Base::Vector3d, Base::Vector3d> result;
     if (edgeNames.empty()) {
         Base::Console().Warning("CL::calcEndPoints2Lines - no edges!\n");
@@ -494,11 +494,11 @@ std::pair<Base::Vector3d, Base::Vector3d> CenterLine::calcEndPoints2Lines(DrawVi
         if (bg) {
             edges.push_back(bg);
         } else {
-            Base::Console().Message("CL::calcEndPoints2Lines - no geom for index: %d\n", idx);
+            Base::Console().Message("CL::calcEndPoints2Lines - no geom for index: {}\n", idx);
         }
     }
     if (edges.size() != 2) {
-        Base::Console().Message("CL::calcEndPoints2Lines - wrong number of edges: %d!\n", edges.size());
+        Base::Console().Message("CL::calcEndPoints2Lines - wrong number of edges: {}!\n", edges.size());
 //        return result;
         throw Base::IndexError("CenterLine wrong number of edges.");
     }
@@ -762,7 +762,7 @@ void CenterLine::Save(Base::Writer &writer) const
         TechDraw::AOCPtr aoc = std::static_pointer_cast<TechDraw::AOC>(m_geometry);
         aoc->Save(writer);
     } else {
-        Base::Console().Message("CL::Save - unimplemented geomType: %d\n", static_cast<int>(m_geometry->getGeomType()));
+        Base::Console().Message("CL::Save - unimplemented geomType: {}\n", static_cast<int>(m_geometry->getGeomType()));
     }
 }
 
@@ -862,7 +862,7 @@ void CenterLine::Restore(Base::XMLReader &reader)
         aoc->setOCCEdge(GeometryUtils::edgeFromCircleArc(aoc));
         m_geometry = aoc;
     } else {
-        Base::Console().Warning("CL::Restore - unimplemented geomType: %d\n", static_cast<int>(gType));
+        Base::Console().Warning("CL::Restore - unimplemented geomType: {}\n", static_cast<int>(gType));
     }
 }
 

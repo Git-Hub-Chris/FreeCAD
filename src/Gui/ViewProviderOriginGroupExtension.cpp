@@ -161,7 +161,7 @@ void ViewProviderOriginGroupExtension::updateOriginSize () {
         assert ( vp->isDerivedFrom ( Gui::ViewProviderOrigin::getClassTypeId () ) );
         vpOrigin = static_cast <Gui::ViewProviderOrigin *> ( vp );
     } catch (const Base::Exception &ex) {
-        Base::Console().Error ("%s\n", ex.what() );
+        Base::Console().Error ("{}\n", ex.what() );
         return;
     }
 

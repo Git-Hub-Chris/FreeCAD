@@ -182,13 +182,13 @@ bool ViewProviderBody::doubleClicked()
 //    //Base::Console().Error("ViewProviderBody::updateTree()\n");
 //    PartDesign::Body* body = static_cast<PartDesign::Body*>(getObject());
 //    bool active = body->IsActive.getValue();
-//    //Base::Console().Error("Body is %s\n", active ? "active" : "inactive");
+//    //Base::Console().Error("Body is {}\n", active ? "active" : "inactive");
 //    ActiveGuiDoc->signalHighlightObject(*this, Gui::Blue, active);
 //    std::vector<App::DocumentObject*> features = body->Group.getValues();
 //    bool highlight = true;
 //    App::DocumentObject* tip = body->Tip.getValue();
 //    for (std::vector<App::DocumentObject*>::const_iterator f = features.begin(); f != features.end(); f++) {
-//        //Base::Console().Error("Highlighting %s: %s\n", (*f)->getNameInDocument(), highlight ? "true" : "false");
+//        //Base::Console().Error("Highlighting {}: {}\n", (*f)->getNameInDocument(), highlight ? "true" : "false");
 //        Gui::ViewProviderDocumentObject* vp = dynamic_cast<Gui::ViewProviderDocumentObject*>(Gui::Application::Instance->getViewProvider(*f));
 //        if (vp != NULL)
 //            ActiveGuiDoc->signalHighlightObject(*vp, Gui::LightBlue, active ? highlight : false);
@@ -343,7 +343,7 @@ void ViewProviderBody::updateOriginDatumSize () {
         vpOrigin = static_cast <Gui::ViewProviderOrigin *> ( vp );
     } catch (const Base::Exception &ex) {
         if(!getExtendedViewProvider()->getDocument()->getDocument()->testStatus(App::Document::Restoring))
-            Base::Console().Error ("%s\n", ex.what() );
+            Base::Console().Error ("{}\n", ex.what() );
         return;
     }
 
@@ -383,7 +383,7 @@ void ViewProviderBody::onChanged(const App::Property* prop) {
             if(getOverrideMode() == "As Is")
                 setDisplayMaskMode(DisplayMode.getValueAsString());
             else {
-                Base::Console().Message("Set override mode: %s\n", getOverrideMode().c_str());
+                Base::Console().Message("Set override mode: {}\n", getOverrideMode().c_str());
                 setDisplayMaskMode(getOverrideMode().c_str());
             }
         }

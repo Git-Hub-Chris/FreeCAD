@@ -328,7 +328,7 @@ void PropertyEditor::recomputeDocument(App::Document* doc)
     }
     catch (const std::exception& e) {
         Base::Console().Error("Unhandled std::exception caught in PropertyEditor::recomputeDocument.\n"
-                            "The error message is: %s\n", e.what());
+                            "The error message is: {}\n", e.what());
     }
     catch (...) {
         Base::Console().Error("Unhandled unknown exception caught in PropertyEditor::recomputeDocument.\n");

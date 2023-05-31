@@ -267,7 +267,7 @@ void TaskSectionView::restoreSectionState()
 //the VectorEditWidget reports a change in direction
 void TaskSectionView::slotViewDirectionChanged(Base::Vector3d newDirection)
 {
-    //    Base::Console().Message("TSV::slotViewDirectionChanged(%s)\n",
+    //    Base::Console().Message("TSV::slotViewDirectionChanged({})\n",
     //                            DrawUtil::formatVector(newDirection).c_str());
     Base::Vector3d projectedViewDirection = m_base->projectPoint(newDirection, false);
     projectedViewDirection.Normalize();
@@ -280,7 +280,7 @@ void TaskSectionView::slotViewDirectionChanged(Base::Vector3d newDirection)
 //the CompassWidget reports that the view direction angle has changed
 void TaskSectionView::slotChangeAngle(double newAngle)
 {
-    //    Base::Console().Message("TSV::slotChangeAngle(%.3f)\n", newAngle);
+    //    Base::Console().Message("TSV::slotChangeAngle({:.3f})\n", newAngle);
     double angleRadians = newAngle * M_PI / 180.0;
     double unitX = cos(angleRadians);
     double unitY = sin(angleRadians);
@@ -419,7 +419,7 @@ void TaskSectionView::updateNowClicked() { apply(true); }
 //******************************************************************************
 bool TaskSectionView::apply(bool forceUpdate)
 {
-    //    Base::Console().Message("TSV::apply() - liveUpdate: %d force: %d deferred: %d\n",
+    //    Base::Console().Message("TSV::apply() - liveUpdate: {} force: {} deferred: {}\n",
     //                            ui->cbLiveUpdate->isChecked(), forceUpdate, m_applyDeferred);
     if (!ui->cbLiveUpdate->isChecked() && !forceUpdate) {
         //nothing to do
@@ -468,7 +468,7 @@ bool TaskSectionView::apply(bool forceUpdate)
 
 void TaskSectionView::applyQuick(std::string dir)
 {
-    //    Base::Console().Message("TSV::applyQuick(%s)\n", dir.c_str());
+    //    Base::Console().Message("TSV::applyQuick({})\n", dir.c_str());
     m_dirName = dir;
     enableAll(true);
     apply();
@@ -552,7 +552,7 @@ TechDraw::DrawViewSection* TaskSectionView::createSectionView(void)
 
 void TaskSectionView::updateSectionView()
 {
-    //    Base::Console().Message("TSV::updateSectionView() - m_sectionName: %s\n", m_sectionName.c_str());
+    //    Base::Console().Message("TSV::updateSectionView() - m_sectionName: {}\n", m_sectionName.c_str());
     if (!isSectionValid()) {
         failNoObject();
         return;

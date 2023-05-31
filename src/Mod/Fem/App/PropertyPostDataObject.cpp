@@ -338,11 +338,11 @@ void PropertyPostDataObject::SaveDocFile(Base::Writer &writer) const
         App::PropertyContainer *father = this->getContainer();
         if (father && father->isDerivedFrom(App::DocumentObject::getClassTypeId())) {
             App::DocumentObject *obj = static_cast<App::DocumentObject *>(father);
-            Base::Console().Error("Dataset of '%s' cannot be written to vtk file '%s'\n",
+            Base::Console().Error("Dataset of '{}' cannot be written to vtk file '{}'\n",
                                   obj->Label.getValue(), fi.filePath().c_str());
         }
         else {
-            Base::Console().Error("Cannot save vtk file '%s'\n", fi.filePath().c_str());
+            Base::Console().Error("Cannot save vtk file '{}'\n", fi.filePath().c_str());
         }
 
         std::stringstream ss;
@@ -407,11 +407,11 @@ void PropertyPostDataObject::RestoreDocFile(Base::Reader &reader)
             App::PropertyContainer *father = this->getContainer();
             if (father && father->isDerivedFrom(App::DocumentObject::getClassTypeId())) {
                 App::DocumentObject *obj = static_cast<App::DocumentObject *>(father);
-                Base::Console().Error("Dataset file '%s' with data of '%s' seems to be empty\n",
+                Base::Console().Error("Dataset file '{}' with data of '{}' seems to be empty\n",
                                       fi.filePath().c_str(), obj->Label.getValue());
             }
             else {
-                Base::Console().Warning("Loaded Dataset file '%s' seems to be empty\n",
+                Base::Console().Warning("Loaded Dataset file '{}' seems to be empty\n",
                                         fi.filePath().c_str());
             }
         }

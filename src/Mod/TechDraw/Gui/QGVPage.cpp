@@ -230,7 +230,7 @@ void QGVPage::initNavigationStyle()
 
 void QGVPage::setNavigationStyle(std::string navParm)
 {
-    //    Base::Console().Message("QGVP::setNavigationStyle(%s)\n", navParm.c_str());
+    //    Base::Console().Message("QGVP::setNavigationStyle({})\n", navParm.c_str());
     if (m_navStyle) {
         delete m_navStyle;
     }
@@ -283,7 +283,7 @@ void QGVPage::setNavigationStyle(std::string navParm)
 
 void QGVPage::startBalloonPlacing(DrawView* parent)
 {
-    //    Base::Console().Message("QGVP::startBalloonPlacing(%s)\n", parent->getNameInDocument());
+    //    Base::Console().Message("QGVP::startBalloonPlacing({})\n", parent->getNameInDocument());
     balloonPlacing = true;
     m_balloonParent = parent;
 #if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)

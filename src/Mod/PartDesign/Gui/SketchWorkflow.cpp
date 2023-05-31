@@ -378,7 +378,7 @@ public:
             tryFindBasePlanes();
         }
         catch (const Base::Exception &ex) {
-            Base::Console().Error ("%s\n", ex.what() );
+            Base::Console().Error ("{}\n", ex.what() );
         }
     }
 

@@ -85,7 +85,7 @@ public:
             fit.SetInitialValues(base, axis);
 
 #if defined(FC_DEBUG)
-            Base::Console().Message("Initial axis: (%f, %f, %f)\n", axis.x, axis.y, axis.z);
+            Base::Console().Message("Initial axis: ({}, {}, {})\n", axis.x, axis.y, axis.z);
 #endif
         }
 

@@ -1007,7 +1007,7 @@ DocumentObjectExecReturn *Sheet::execute(void)
                 boost::topological_sort(graph, std::front_inserter(make_order));
             } catch (std::exception&) { //TODO: evaluate using a more specific exception (not_a_dag)
                 // Cycle detected; flag all with errors
-                Base::Console().Error("Cyclic dependency detected in spreadsheet : %s\n", *pcNameInDocument);
+                Base::Console().Error("Cyclic dependency detected in spreadsheet : {}\n", *pcNameInDocument);
                 std::ostringstream ss;
                 ss << "Cyclic dependency";
                 int count = 0;

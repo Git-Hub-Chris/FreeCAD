@@ -88,7 +88,7 @@ open(PyObject * /*self*/, PyObject *args)
 
   PY_TRY {
 
-    //Base::Console().Log("Open in Mesh with %s",Name);
+    //Base::Console().Log("Open in Mesh with {}",Name);
     Base::FileInfo file(EncodedName.c_str());
 
     // extract ending
@@ -210,7 +210,7 @@ insert(PyObject * /*self*/, PyObject *args)
         //}else{
         //    clearData();
         //    //Py_Error(Base::BaseExceptionFreeCADError,"No Mesh in file");
-        //    Base::Console().Warning("No Mesh in file: %s\n",EncodedName.c_str());
+        //    Base::Console().Warning("No Mesh in file: {}\n",EncodedName.c_str());
         //}
      }
     else

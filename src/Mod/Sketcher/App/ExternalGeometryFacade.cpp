@@ -36,9 +36,9 @@ using namespace Sketcher;
 TYPESYSTEM_SOURCE(Sketcher::ExternalGeometryFacade, Base::BaseClass)
 
 ExternalGeometryFacade::ExternalGeometryFacade()
-    : Geo(nullptr),
-      SketchGeoExtension(nullptr),
-      ExternalGeoExtension(nullptr)
+    : Geo(nullptr)
+    , SketchGeoExtension(nullptr)
+    , ExternalGeoExtension(nullptr)
 {}
 
 ExternalGeometryFacade::ExternalGeometryFacade(const Part::Geometry* geometry)
@@ -83,7 +83,7 @@ void ExternalGeometryFacade::initExtensions()
 
         getGeo()->setExtension(std::make_unique<SketchGeometryExtension>());// Create getExtension
 
-        Base::Console().Warning("%s\nSketcher External Geometry without Geometry Extension: %s \n",
+        Base::Console().Warning("{}\nSketcher External Geometry without Geometry Extension: {} \n",
                                 boost::uuids::to_string(Geo->getTag()).c_str());
     }
 
@@ -92,7 +92,7 @@ void ExternalGeometryFacade::initExtensions()
         getGeo()->setExtension(std::make_unique<ExternalGeometryExtension>());// Create getExtension
 
         Base::Console().Warning(
-            "%s\nSketcher External Geometry without ExternalGeometryExtension: %s \n",
+            "{}\nSketcher External Geometry without ExternalGeometryExtension: {} \n",
             boost::uuids::to_string(Geo->getTag()).c_str());
     }
 

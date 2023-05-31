@@ -357,7 +357,7 @@ GtsSurface* MeshAlgos::createGTSSurface(MeshCore::MeshKernel* Mesh)
           new_edge (aVertex[p3],aVertex[p1])));
   }
 
-  Base::Console().Log("GTS [%d faces, %d Points, %d Edges,%s ,%s]\n",gts_surface_face_number(Surf),
+  Base::Console().Log("GTS [{} faces, {} Points, {} Edges,{} ,{}]\n",gts_surface_face_number(Surf),
                                                                      gts_surface_vertex_number(Surf),
                                                                      gts_surface_edge_number(Surf),
                                                                      gts_surface_is_orientable (Surf)?"orientable":"not orientable",
@@ -534,7 +534,7 @@ void MeshAlgos::LoftOnCurve(MeshCore::MeshKernel &ResultMesh, const TopoDS_Shape
       Up.Normalize();
       Base::Vector3f Third(Tng%Up);
 
-//      Base::Console().Log("Pos: %f %f %f \n",Ptn.x,Ptn.y,Ptn.z);
+//      Base::Console().Log("Pos: {} {} {} \n",Ptn.x,Ptn.y,Ptn.z);
 
       unsigned int l=0;
       std::vector<Base::Vector3f>::const_iterator It;

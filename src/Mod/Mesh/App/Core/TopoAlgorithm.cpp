@@ -1581,7 +1581,7 @@ void MeshTopoAlgorithm::FillupHoles(int level, AbstractPolygonTriangulator& cTri
             if (it->_aulPoints[0] >= ctPoints ||
                 it->_aulPoints[1] >= ctPoints ||
                 it->_aulPoints[2] >= ctPoints) {
-                Base::Console().Log("Ignore invalid face <%d, %d, %d> (%d vertices)\n",
+                Base::Console().Log("Ignore invalid face <{}, {}, {}> ({} vertices)\n",
                     it->_aulPoints[0], it->_aulPoints[1], it->_aulPoints[2], ctPoints);
             }
             else {

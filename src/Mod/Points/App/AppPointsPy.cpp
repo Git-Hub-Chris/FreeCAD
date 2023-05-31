@@ -81,7 +81,7 @@ private:
         PyMem_Free(Name);
 
         try {
-            Base::Console().Log("Open in Points with %s", EncodedName.c_str());
+            Base::Console().Log("Open in Points with {}", EncodedName.c_str());
             Base::FileInfo file(EncodedName.c_str());
 
             // extract ending
@@ -197,7 +197,7 @@ private:
         PyMem_Free(Name);
 
         try {
-            Base::Console().Log("Import in Points with %s", EncodedName.c_str());
+            Base::Console().Log("Import in Points with {}", EncodedName.c_str());
             Base::FileInfo file(EncodedName.c_str());
 
             // extract ending
@@ -375,7 +375,7 @@ private:
                     break;
                 }
                 else {
-                    Base::Console().Message("'%s' is not a point object, export will be ignored.\n", obj->Label.getValue());
+                    Base::Console().Message("'{}' is not a point object, export will be ignored.\n", obj->Label.getValue());
                 }
             }
         }

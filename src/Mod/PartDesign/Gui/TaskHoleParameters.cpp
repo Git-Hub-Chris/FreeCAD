@@ -720,7 +720,7 @@ void TaskHoleParameters::changedObject(const App::Document&, const App::Property
     PartDesign::Hole* pcHole = static_cast<PartDesign::Hole*>(vp->getObject());
     bool ro = Prop.isReadOnly();
 
-    Base::Console().Log("Parameter %s was updated\n", Prop.getName());
+    Base::Console().Log("Parameter {} was updated\n", Prop.getName());
 
     if (&Prop == &pcHole->Threaded) {
         ui->Threaded->setEnabled(true);
@@ -1204,7 +1204,7 @@ TaskHoleParameters::Observer::Observer(TaskHoleParameters* _owner, PartDesign::H
 void TaskHoleParameters::Observer::slotChangedObject(const App::DocumentObject& Obj, const App::Property& Prop)
 {
     if (&Obj == hole) {
-        Base::Console().Log("Parameter %s was updated with a new value\n", Prop.getName());
+        Base::Console().Log("Parameter {} was updated with a new value\n", Prop.getName());
         if (Obj.getDocument())
             owner->changedObject(*Obj.getDocument(), Prop);
     }

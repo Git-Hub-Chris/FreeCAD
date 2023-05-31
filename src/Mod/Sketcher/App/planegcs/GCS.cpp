@@ -446,42 +446,42 @@ using Graph = boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS
 
 // System
 System::System()
-    : plist(0),
-      pdrivenlist(0),
-      pDependentParameters(0),
-      clist(0),
-      c2p(),
-      p2c(),
-      subSystems(0),
-      subSystemsAux(0),
-      reference(0),
-      dofs(0),
-      hasUnknowns(false),
-      hasDiagnosis(false),
-      isInit(false),
-      emptyDiagnoseMatrix(true),
-      maxIter(100),
-      maxIterRedundant(100),
-      sketchSizeMultiplier(false),
-      sketchSizeMultiplierRedundant(false),
-      convergence(1e-10),
-      convergenceRedundant(1e-10),
-      qrAlgorithm(EigenSparseQR),
-      dogLegGaussStep(FullPivLU),
-      qrpivotThreshold(1E-13),
-      debugMode(Minimal),
-      LM_eps(1E-10),
-      LM_eps1(1E-80),
-      LM_tau(1E-3),
-      DL_tolg(1E-80),
-      DL_tolx(1E-80),
-      DL_tolf(1E-10),
-      LM_epsRedundant(1E-10),
-      LM_eps1Redundant(1E-80),
-      LM_tauRedundant(1E-3),
-      DL_tolgRedundant(1E-80),
-      DL_tolxRedundant(1E-80),
-      DL_tolfRedundant(1E-10)
+    : plist(0)
+    , pdrivenlist(0)
+    , pDependentParameters(0)
+    , clist(0)
+    , c2p()
+    , p2c()
+    , subSystems(0)
+    , subSystemsAux(0)
+    , reference(0)
+    , dofs(0)
+    , hasUnknowns(false)
+    , hasDiagnosis(false)
+    , isInit(false)
+    , emptyDiagnoseMatrix(true)
+    , maxIter(100)
+    , maxIterRedundant(100)
+    , sketchSizeMultiplier(false)
+    , sketchSizeMultiplierRedundant(false)
+    , convergence(1e-10)
+    , convergenceRedundant(1e-10)
+    , qrAlgorithm(EigenSparseQR)
+    , dogLegGaussStep(FullPivLU)
+    , qrpivotThreshold(1E-13)
+    , debugMode(Minimal)
+    , LM_eps(1E-10)
+    , LM_eps1(1E-80)
+    , LM_tau(1E-3)
+    , DL_tolg(1E-80)
+    , DL_tolx(1E-80)
+    , DL_tolf(1E-10)
+    , LM_epsRedundant(1E-10)
+    , LM_eps1Redundant(1E-80)
+    , LM_tauRedundant(1E-3)
+    , DL_tolgRedundant(1E-80)
+    , DL_tolxRedundant(1E-80)
+    , DL_tolfRedundant(1E-10)
 {
     // currently Eigen only supports multithreading for multiplications
     // There is no appreciable gain from using more threads
@@ -4850,7 +4850,7 @@ int System::diagnose(Algorithm alg)
 
         auto SolveTime = Base::TimeInfo::diffTimeF(DenseQR_start_time, DenseQR_end_time);
 
-        Base::Console().Log("\nDenseQR - Lapsed Time: %f seconds\n", SolveTime);
+        Base::Console().Log("\nDenseQR - Lapsed Time: {} seconds\n", SolveTime);
 #endif
     }
 
@@ -4921,7 +4921,7 @@ int System::diagnose(Algorithm alg)
 
         auto SolveTime = Base::TimeInfo::diffTimeF(SparseQR_start_time, SparseQR_end_time);
 
-        Base::Console().Log("\nSparseQR - Lapsed Time: %f seconds\n", SolveTime);
+        Base::Console().Log("\nSparseQR - Lapsed Time: {} seconds\n", SolveTime);
 #endif
     }
 #endif
@@ -5416,7 +5416,7 @@ void System::identifyConflictingRedundantConstraints(
                 break;
         }
 
-        Base::Console().Log("Sketcher::RedundantSolving-%s-\n", solvername.c_str());
+        Base::Console().Log("Sketcher::RedundantSolving-{}-\n", solvername.c_str());
     }
 
     if (res == Success) {
@@ -5431,7 +5431,7 @@ void System::identifyConflictingRedundantConstraints(
         resetToReference();
 
         if (debugMode == Minimal || debugMode == IterationLevel) {
-            Base::Console().Log("Sketcher Redundant solving: %d redundants\n", redundant.size());
+            Base::Console().Log("Sketcher Redundant solving: {} redundants\n", redundant.size());
         }
 
         std::vector<std::vector<Constraint*>> conflictGroupsOrig = conflictGroups;
@@ -5443,7 +5443,7 @@ void System::identifyConflictingRedundantConstraints(
                     isRedundant = true;
 
                     if (debugMode == IterationLevel) {
-                        Base::Console().Log("(Partially) Redundant, Group %d, index %d, Tag: %d\n",
+                        Base::Console().Log("(Partially) Redundant, Group {}, index {}, Tag: {}\n",
                                             i,
                                             j,
                                             (conflictGroupsOrig[i][j])->getTag());

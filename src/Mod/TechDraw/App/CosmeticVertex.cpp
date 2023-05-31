@@ -236,6 +236,6 @@ PyObject* CosmeticVertex::getPyObject()
 
 void CosmeticVertex::dump(const char* title)
 {
-    Base::Console().Message("CV::dump - %s \n", title);
-    Base::Console().Message("CV::dump - %s \n", toString().c_str());
+    Base::Console().Message("CV::dump - {} \n", title);
+    Base::Console().Message("CV::dump - {} \n", toString().c_str());
 }

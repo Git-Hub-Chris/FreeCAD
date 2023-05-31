@@ -79,7 +79,7 @@ QGIPrimPath::QGIPrimPath():
 
 QVariant QGIPrimPath::itemChange(GraphicsItemChange change, const QVariant &value)
 {
-//    Base::Console().Message("QGIPP::itemChange(%d) - type: %d\n", change, type() - QGraphicsItem::UserType);
+//    Base::Console().Message("QGIPP::itemChange({}) - type: {}\n", change, type() - QGraphicsItem::UserType);
     if (change == ItemSelectedHasChanged && scene()) {
         if(isSelected()) {
             setPrettySel();
@@ -92,7 +92,7 @@ QVariant QGIPrimPath::itemChange(GraphicsItemChange change, const QVariant &valu
 
 void QGIPrimPath::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
-//    Base::Console().Message("QGIPP::hoverEnter() - selected; %d\n", isSelected());
+//    Base::Console().Message("QGIPP::hoverEnter() - selected; {}\n", isSelected());
     if (!isSelected()) {
         setPrettyPre();
     }
@@ -101,7 +101,7 @@ void QGIPrimPath::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 
 void QGIPrimPath::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
-//    Base::Console().Message("QGIPP::hoverLeave() - selected; %d\n", isSelected());
+//    Base::Console().Message("QGIPP::hoverLeave() - selected; {}\n", isSelected());
     if(!isSelected()) {
         setPrettyNormal();
     }
@@ -199,20 +199,20 @@ QColor QGIPrimPath::getSelectColor()
 
 void QGIPrimPath::setWidth(double w)
 {
-//    Base::Console().Message("QGIPP::setWidth(%.3f)\n", w);
+//    Base::Console().Message("QGIPP::setWidth({:.3f})\n", w);
     m_width = w;
     m_pen.setWidthF(m_width);
 }
 
 void QGIPrimPath::setStyle(Qt::PenStyle s)
 {
-//    Base::Console().Message("QGIPP::setStyle(QTPS: %d)\n", s);
+//    Base::Console().Message("QGIPP::setStyle(QTPS: {})\n", s);
     m_styleCurrent = s;
 }
 
 void QGIPrimPath::setStyle(int s)
 {
-//    Base::Console().Message("QGIPP::setStyle(int: %d)\n", s);
+//    Base::Console().Message("QGIPP::setStyle(int: {})\n", s);
     m_styleCurrent = static_cast<Qt::PenStyle>(s);
 }
 

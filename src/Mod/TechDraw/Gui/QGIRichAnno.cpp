@@ -92,7 +92,7 @@ QGIRichAnno::QGIRichAnno() :
 
 void QGIRichAnno::updateView(bool update)
 {
-//    Base::Console().Message("QGIRA::updateView() - %s\n", getViewName());
+//    Base::Console().Message("QGIRA::updateView() - {}\n", getViewName());
     Q_UNUSED(update);
     auto annoFeat( dynamic_cast<TechDraw::DrawRichAnno*>(getViewObject()) );
     if (!annoFeat) {
@@ -122,7 +122,7 @@ void QGIRichAnno::drawBorder()
 
 void QGIRichAnno::draw()
 {
-//    Base::Console().Log("QGIRA::draw() - %s - parent: %X\n", getFeature()->getNameInDocument(), parentItem());
+//    Base::Console().Log("QGIRA::draw() - {} - parent: {}\n", getFeature()->getNameInDocument(), parentItem());
     if (!isVisible())
 //        Base::Console().Message("QGIRA::draw - not visible\n");
         return;
@@ -145,7 +145,7 @@ void QGIRichAnno::draw()
 
 void QGIRichAnno::setTextItem()
 {
-//    Base::Console().Message("QGIRA::setTextItem() - %s\n", getViewName());
+//    Base::Console().Message("QGIRA::setTextItem() - {}\n", getViewName());
     TechDraw::DrawRichAnno* annoFeat = getFeature();
     QString inHtml = QString::fromUtf8(annoFeat->AnnoText.getValue());
 

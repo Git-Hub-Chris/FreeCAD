@@ -361,7 +361,7 @@ void CallTipsList::extractTipsFromObject(Py::Object& obj, Py::List& list, QMap<Q
             // https://forum.freecad.org/viewtopic.php?f=39&t=33874&start=30#p286772
             Py::Object attr = obj.getAttr(name);
             if (!attr.ptr()) {
-                Base::Console().Log("Python attribute '%s' returns null!\n", name.c_str());
+                Base::Console().Log("Python attribute '{}' returns null!\n", name.c_str());
                 continue;
             }
 

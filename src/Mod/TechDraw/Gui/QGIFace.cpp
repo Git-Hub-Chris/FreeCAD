@@ -153,7 +153,7 @@ void QGIFace::draw()
 }
 
 void QGIFace::setPrettyNormal() {
-//    Base::Console().Message("QGIF::setPrettyNormal() - hatched: %d\n", isHatched());
+//    Base::Console().Message("QGIF::setPrettyNormal() - hatched: {}\n", isHatched());
     if (isHatched()  &&
         (m_mode == BitmapFill) ) {                               //hatch with bitmap fill
         m_fillStyleCurrent = Qt::TexturePattern;
@@ -196,7 +196,7 @@ void QGIFace::loadSvgHatch(std::string fileSpec)
     QString qfs(QString::fromUtf8(fileSpec.data(), fileSpec.size()));
     QFile f(qfs);
     if (!f.open(QFile::ReadOnly | QFile::Text))  {
-        Base::Console().Error("QGIFace could not read %s\n", fileSpec.c_str());
+        Base::Console().Error("QGIFace could not read {}\n", fileSpec.c_str());
         return;
     }
     m_svgXML = f.readAll();
@@ -278,7 +278,7 @@ void QGIFace::lineSetToFillItems(LineSet& ls)
         }
 
         if (m_segCount > m_maxSeg) {
-            Base::Console().Warning("PAT segment count exceeded: %ld\n", m_segCount);
+            Base::Console().Warning("PAT segment count exceeded: {}\n", m_segCount);
             break;
         }
     }
@@ -388,7 +388,7 @@ QPainterPath QGIFace::dashedPPath(const std::vector<double> dv, const Base::Vect
          while (travel < lineLength) {
              bool stop = false;
             if (m_segCount > 10000) {
-                Base::Console().Warning("PAT segment count exceeded: %ld\n", m_segCount);
+                Base::Console().Warning("PAT segment count exceeded: {}\n", m_segCount);
                 break;
             }
 
@@ -504,7 +504,7 @@ void QGIFace::makeMark(double x, double y)
 
 void QGIFace::buildSvgHatch()
 {
-//    Base::Console().Message("QGIF::buildSvgHatch() - offset: %s\n", DrawUtil::formatVector(getHatchOffset()).c_str());
+//    Base::Console().Message("QGIF::buildSvgHatch() - offset: {}\n", DrawUtil::formatVector(getHatchOffset()).c_str());
     double wTile = SVGSIZEW * m_fillScale;
     double hTile = SVGSIZEH * m_fillScale;
     double w = m_outline.boundingRect().width();
@@ -534,7 +534,7 @@ void QGIFace::buildSvgHatch()
             }
             tileCount++;
             if (tileCount > m_maxTile) {
-                Base::Console().Warning("SVG tile count exceeded: %ld\n", tileCount);
+                Base::Console().Warning("SVG tile count exceeded: {}\n", tileCount);
                 break;
             }
         }
@@ -554,7 +554,7 @@ void QGIFace::clearSvg()
 
 void QGIFace::buildPixHatch()
 {
-//    Base::Console().Message("QGIF::buildPixHatch() - offset: %s\n", DrawUtil::formatVector(getHatchOffset()).c_str());
+//    Base::Console().Message("QGIF::buildPixHatch() - offset: {}\n", DrawUtil::formatVector(getHatchOffset()).c_str());
     double wTile = SVGSIZEW * m_fillScale;
     double hTile = SVGSIZEH * m_fillScale;
     double faceWidth = m_outline.boundingRect().width();
@@ -622,7 +622,7 @@ void QGIFace::buildPixHatch()
                                QRectF(0, 0, wTile, hTile));  //source rect
             tileCount++;
             if (tileCount > m_maxTile) {
-                Base::Console().Warning("Pixmap tile count exceeded: %ld\n", tileCount);
+                Base::Console().Warning("Pixmap tile count exceeded: {}\n", tileCount);
                 break;
             }
         }
@@ -680,7 +680,7 @@ QPixmap QGIFace::textureFromBitmap(std::string fileSpec)
     QString qfs(QString::fromUtf8(fileSpec.data(), fileSpec.size()));
     QFile f(qfs);
     if (!f.open(QFile::ReadOnly))  {
-        Base::Console().Error("QGIFace could not read %s\n", fileSpec.c_str());
+        Base::Console().Error("QGIFace could not read {}\n", fileSpec.c_str());
         return pix;
     }
     QByteArray bytes = f.readAll();

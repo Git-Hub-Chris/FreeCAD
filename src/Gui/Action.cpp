@@ -1183,7 +1183,7 @@ void RecentMacrosAction::setFiles(const QStringList& files)
         msgMain = msgMain + QStringLiteral(" respectively.\nHint: In Preferences -> Macros -> Recent Macros -> Keyboard Modifiers"
                                            " this should be Ctrl+Shift+ by default, if this is now blank then you should revert"
                                            " it back to Ctrl+Shift+ by pressing both keys at the same time.");
-        Base::Console().Warning("%s\n", qPrintable(msgMain));
+        Base::Console().Warning("{}\n", qPrintable(msgMain));
     }
 }
 

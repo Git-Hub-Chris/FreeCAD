@@ -181,7 +181,7 @@ TechDraw::DrawViewImage* TaskActiveView::createActiveView()
     bool success = image.save(Base::Tools::fromStdString(tempName));
 
     if (!success) {
-        Base::Console().Error("ActiveView could not save file: %s\n", fileSpec.c_str());
+        Base::Console().Error("ActiveView could not save file: {}\n", fileSpec.c_str());
     }
 
     //backslashes in windows fileSpec upsets python

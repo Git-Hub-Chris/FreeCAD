@@ -81,7 +81,7 @@ bool TaskDlgCreateNodeSet::accept()
         return true;
     }
     catch (const Base::Exception& e) {
-        Base::Console().Warning("TaskDlgCreateNodeSet::accept(): %s\n", e.what());
+        Base::Console().Warning("TaskDlgCreateNodeSet::accept(): {}\n", e.what());
     }
 
     return false;

@@ -606,7 +606,7 @@ void TaskDlgProjGroup::open()
 void TaskDlgProjGroup::clicked(int i)
 {
 //    Q_UNUSED(i);
-//    Base::Console().Message("TDPG::clicked(%X)\n", i);
+//    Base::Console().Message("TDPG::clicked({})\n", i);
     if (i == QMessageBox::Apply) {
         widget->apply();
     }

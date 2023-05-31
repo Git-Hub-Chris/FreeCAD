@@ -114,7 +114,7 @@ bool DrawProjGroupItem::showLock(void) const
 
 App::DocumentObjectExecReturn *DrawProjGroupItem::execute(void)
 {
-//    Base::Console().Message("DPGI::execute() - %s / %s\n", getNameInDocument(), Label.getValue());
+//    Base::Console().Message("DPGI::execute() - {} / {}\n", getNameInDocument(), Label.getValue());
     if (!keepUpdated()) {
         return DrawView::execute();
     }
@@ -142,7 +142,7 @@ App::DocumentObjectExecReturn *DrawProjGroupItem::execute(void)
 
 void DrawProjGroupItem::postHlrTasks(void)
 {
-//    Base::Console().Message("DPGI::postHlrTasks() - %s\n", getNameInDocument());
+//    Base::Console().Message("DPGI::postHlrTasks() - {}\n", getNameInDocument());
     DrawViewPart::postHlrTasks();
 
     //DPGI has no geometry until HLR has finished, and the DPG can not properly
@@ -154,7 +154,7 @@ void DrawProjGroupItem::postHlrTasks(void)
 
 void DrawProjGroupItem::autoPosition()
 {
-//    Base::Console().Message("DPGI::autoPosition(%s)\n", Label.getValue());
+//    Base::Console().Message("DPGI::autoPosition({})\n", Label.getValue());
     if (LockPosition.getValue()) {
         return;
     }
@@ -171,7 +171,7 @@ void DrawProjGroupItem::autoPosition()
 
 void DrawProjGroupItem::onDocumentRestored()
 {
-//    Base::Console().Message("DPGI::onDocumentRestored() - %s\n", getNameInDocument());
+//    Base::Console().Message("DPGI::onDocumentRestored() - {}\n", getNameInDocument());
     DrawView::onDocumentRestored();
     App::DocumentObjectExecReturn* rc = DrawProjGroupItem::execute();
     if (rc) {
@@ -216,7 +216,7 @@ gp_Ax2 DrawProjGroupItem::getViewAxis(const Base::Vector3d& pt,
     rotVec = rotVec - (yNorm * 2.0) * (rotVec.Dot(yNorm));
 
     if (DrawUtil::checkParallel(projDir, rotVec)) {
-         Base::Console().Warning("DPGI::getVA - %s - Direction and XDirection parallel. using defaults\n",
+         Base::Console().Warning("DPGI::getVA - {} - Direction and XDirection parallel. using defaults\n",
                                  getNameInDocument());
     }
     try {
@@ -225,7 +225,7 @@ gp_Ax2 DrawProjGroupItem::getViewAxis(const Base::Vector3d& pt,
                           gp_Dir(rotVec.x, rotVec.y, rotVec.z));
     }
     catch (Standard_Failure& e4) {
-        Base::Console().Message("PROBLEM - DPGI (%s) failed to create viewAxis: %s **\n",
+        Base::Console().Message("PROBLEM - DPGI ({}) failed to create viewAxis: {} **\n",
                                 getNameInDocument(), e4.GetMessageString());
         return TechDraw::getViewAxis(pt, axis, false);
     }
@@ -235,7 +235,7 @@ gp_Ax2 DrawProjGroupItem::getViewAxis(const Base::Vector3d& pt,
 
 Base::Vector3d DrawProjGroupItem::getXDirection(void) const
 {
-//    Base::Console().Message("DPGI::getXDirection() - %s\n", Label.getValue());
+//    Base::Console().Message("DPGI::getXDirection() - {}\n", Label.getValue());
     Base::Vector3d result(1.0, 0.0, 0.0);               //default X
     App::Property* prop = getPropertyByName("XDirection");
     if (prop) {
@@ -267,7 +267,7 @@ Base::Vector3d DrawProjGroupItem::getLegacyX(const Base::Vector3d& pt,
                                         const Base::Vector3d& axis,
                                         const bool flip)  const
 {
-//    Base::Console().Message("DPGI::getLegacyX() - %s\n", Label.getValue());
+//    Base::Console().Message("DPGI::getLegacyX() - {}\n", Label.getValue());
     App::Property* prop = getPropertyByName("RotationVector");
     if (prop) {
         Base::Vector3d result = RotationVector.getValue();
@@ -343,7 +343,7 @@ void DrawProjGroupItem::unsetupObject()
 
     if ( getPGroup()->getAnchor() == this &&
          !getPGroup()->isUnsetting() )         {
-           Base::Console().Warning("Warning - DPG (%s/%s) may be corrupt - Anchor deleted\n",
+           Base::Console().Warning("Warning - DPG ({}/{}) may be corrupt - Anchor deleted\n",
                                    getPGroup()->getNameInDocument(), getPGroup()->Label.getValue());
            getPGroup()->Anchor.setValue(nullptr);    //this catches situation where DPGI is deleted w/o DPG::removeProjection
     }

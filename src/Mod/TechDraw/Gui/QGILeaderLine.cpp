@@ -119,7 +119,7 @@ void QGILeaderLine::setLeaderFeature(TechDraw::DrawLeaderLine* feat)
 
 QVariant QGILeaderLine::itemChange(GraphicsItemChange change, const QVariant& value)
 {
-    //    Base::Console().Message("QGILL::itemChange(%d)\n", change);
+    //    Base::Console().Message("QGILL::itemChange({})\n", change);
     if (change == ItemSelectedHasChanged && scene()) {
         if (isSelected()) {
             setPrettySel();
@@ -138,20 +138,20 @@ QVariant QGILeaderLine::itemChange(GraphicsItemChange change, const QVariant& va
 //QGILL isn't draggable so skip QGIV::mousePress have event
 void QGILeaderLine::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
-    //    Base::Console().Message("QGILL::mousePressEvent() - %s\n", getViewName());
+    //    Base::Console().Message("QGILL::mousePressEvent() - {}\n", getViewName());
     QGraphicsItem::mousePressEvent(event);
 }
 
 //QGILL isn't draggable so skip QGIV::mouseRelease
 void QGILeaderLine::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
-    //    Base::Console().Message("QGILL::mouseReleaseEvent() - %s\n", getViewName());
+    //    Base::Console().Message("QGILL::mouseReleaseEvent() - {}\n", getViewName());
     QGraphicsItem::mouseReleaseEvent(event);
 }
 
 void QGILeaderLine::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
 {
-    //    Base::Console().Message("QGILL::hoverEnter() - selected; %d\n", isSelected());
+    //    Base::Console().Message("QGILL::hoverEnter() - selected; {}\n", isSelected());
     m_hasHover = true;
     if (!isSelected()) {
         setPrettyPre();
@@ -161,7 +161,7 @@ void QGILeaderLine::hoverEnterEvent(QGraphicsSceneHoverEvent* event)
 
 void QGILeaderLine::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
 {
-    //    Base::Console().Message("QGILL::hoverLeave() - selected; %d\n", isSelected());
+    //    Base::Console().Message("QGILL::hoverLeave() - selected; {}\n", isSelected());
     m_hasHover = false;
     if (!isSelected()) {
         setPrettyNormal();
@@ -171,7 +171,7 @@ void QGILeaderLine::hoverLeaveEvent(QGraphicsSceneHoverEvent* event)
 
 void QGILeaderLine::onSourceChange(TechDraw::DrawView* newParent)
 {
-    //    Base::Console().Message("QGILL::onSoureChange(%s)\n", newParent->getNameInDocument());
+    //    Base::Console().Message("QGILL::onSoureChange({})\n", newParent->getNameInDocument());
     std::string parentName = newParent->getNameInDocument();
     QGIView* qgiParent = getQGIVByName(parentName);
     if (qgiParent) {
@@ -180,14 +180,14 @@ void QGILeaderLine::onSourceChange(TechDraw::DrawView* newParent)
         draw();
     }
     else {
-        Base::Console().Warning("QGILL::onSourceChange - new parent %s has no QGIView\n",
+        Base::Console().Warning("QGILL::onSourceChange - new parent {} has no QGIView\n",
                                 parentName.c_str());
     }
 }
 
 void QGILeaderLine::setNormalColorAll()
 {
-    //    Base::Console().Message("QGILL::setNormalColorAll - normal color: %s\n", qPrintable(getNormalColor().name()));
+    //    Base::Console().Message("QGILL::setNormalColorAll - normal color: {}\n", qPrintable(getNormalColor().name()));
     QColor qc = prefNormalColor();
     m_line->setNormalColor(qc);
     m_editPath->setNormalColor(qc);
@@ -233,7 +233,7 @@ void QGILeaderLine::closeEdit()
 //signaled from QEPath
 void QGILeaderLine::onLineEditFinished(QPointF tipDisplace, std::vector<QPointF> points)
 {
-    //    Base::Console().Message("QGILL::onLineEditFinished(%s, %d)\n",
+    //    Base::Console().Message("QGILL::onLineEditFinished({}, {})\n",
     //                            TechDraw::DrawUtil::formatVector(tipDisplace).c_str(),
     //                            points.size());
     m_blockDraw = true;
@@ -313,7 +313,7 @@ void QGILeaderLine::restoreState()
 
 void QGILeaderLine::updateView(bool update)
 {
-    //    Base::Console().Message("QGIL::updateView() %s\n", getViewObject()->getNameInDocument());
+    //    Base::Console().Message("QGIL::updateView() {}\n", getViewObject()->getNameInDocument());
     Q_UNUSED(update);
     auto featLeader(dynamic_cast<TechDraw::DrawLeaderLine*>(getViewObject()));
     if (!featLeader) {
@@ -330,7 +330,7 @@ void QGILeaderLine::updateView(bool update)
 
 void QGILeaderLine::draw()
 {
-    //    Base::Console().Message("QGILL::draw()- %s\n", getViewObject()->getNameInDocument());
+    //    Base::Console().Message("QGILL::draw()- {}\n", getViewObject()->getNameInDocument());
     if (m_blockDraw) {
         return;
     }

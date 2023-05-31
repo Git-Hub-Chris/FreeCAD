@@ -73,7 +73,7 @@ GUIApplication::~GUIApplication()
 bool GUIApplication::notify (QObject * receiver, QEvent * event)
 {
     if (!receiver) {
-        Base::Console().Log("GUIApplication::notify: Unexpected null receiver, event type: %d\n",
+        Base::Console().Log("GUIApplication::notify: Unexpected null receiver, event type: {}\n",
             (int)event->type());
         return false;
     }
@@ -91,11 +91,11 @@ bool GUIApplication::notify (QObject * receiver, QEvent * event)
     }
     catch (const Base::Exception& e) {
         Base::Console().Error("Unhandled Base::Exception caught in GUIApplication::notify.\n"
-                              "The error message is: %s\n", e.what());
+                              "The error message is: {}\n", e.what());
     }
     catch (const std::exception& e) {
         Base::Console().Error("Unhandled std::exception caught in GUIApplication::notify.\n"
-                              "The error message is: %s\n", e.what());
+                              "The error message is: {}\n", e.what());
     }
     catch (...) {
         Base::Console().Error("Unhandled unknown exception caught in GUIApplication::notify.\n");
@@ -120,7 +120,7 @@ bool GUIApplication::notify (QObject * receiver, QEvent * event)
                     dump << " is child of\n";
             }
             std::string str = dump.str();
-            Base::Console().Log("%s",str.c_str());
+            Base::Console().Log("{}",str.c_str());
         }
     }
     catch (...) {
@@ -211,10 +211,10 @@ public:
             }
         }
         if (server->isListening()) {
-            Base::Console().Log("Local server '%s' started\n", qPrintable(serverName));
+            Base::Console().Log("Local server '{}' started\n", qPrintable(serverName));
         }
         else {
-            Base::Console().Log("Local server '%s' failed to start\n", qPrintable(serverName));
+            Base::Console().Log("Local server '{}' failed to start\n", qPrintable(serverName));
         }
     }
 
@@ -282,7 +282,7 @@ void GUISingleApplication::receiveConnection()
             d_ptr->timer->stop();
             QByteArray message;
             in >> message;
-            Base::Console().Log("Received message: %s\n", message.constData());
+            Base::Console().Log("Received message: {}\n", message.constData());
             d_ptr->messages.push_back(message);
             d_ptr->timer->start(1000);
         }

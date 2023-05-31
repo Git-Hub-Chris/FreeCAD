@@ -107,7 +107,7 @@ std::string PropertyPythonObject::toString() const
     }
     catch (Py::Exception&) {
         Py::String typestr(this->object.type().str());
-        Base::Console().Error("PropertyPythonObject::toString(): failed for %s\n", typestr.as_string().c_str());
+        Base::Console().Error("PropertyPythonObject::toString(): failed for {}\n", typestr.as_string().c_str());
         Base::PyException e; // extract the Python error text
         e.ReportException();
     }
@@ -257,7 +257,7 @@ void PropertyPythonObject::restoreObject(Base::XMLReader &reader)
         e.clear();
     }
     catch (const Base::Exception& e) {
-        Base::Console().Error("%s\n",e.what());
+        Base::Console().Error("{}\n",e.what());
     }
     catch (...) {
         Base::Console().Error("Critical error in PropertyPythonObject::restoreObject\n");
@@ -375,7 +375,7 @@ void PropertyPythonObject::Restore(Base::XMLReader &reader)
         else if (load_pickle)
             this->loadPickle(buffer);
         else if (!load_failed)
-            Base::Console().Warning("PropertyPythonObject::Restore: unsupported serialisation: %s\n", buffer.c_str());
+            Base::Console().Warning("PropertyPythonObject::Restore: unsupported serialisation: {}\n", buffer.c_str());
         restoreObject(reader);
         hasSetValue();
     }

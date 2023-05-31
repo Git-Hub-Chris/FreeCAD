@@ -106,7 +106,7 @@ QGIWeldSymbol::QGIWeldSymbol(QGILeaderLine* myParent) :
 
 QVariant QGIWeldSymbol::itemChange(GraphicsItemChange change, const QVariant &value)
 {
-//    Base::Console().Message("QGIWS::itemChange(%d)\n", change);
+//    Base::Console().Message("QGIWS::itemChange({})\n", change);
     if (change == ItemSelectedHasChanged && scene()) {
         if(isSelected()) {
             setPrettySel();
@@ -137,7 +137,7 @@ void QGIWeldSymbol::updateView(bool update)
 
 void QGIWeldSymbol::draw()
 {
-//    Base::Console().Message("QGIWS::draw()- %s\n", getFeature()->getNameInDocument());
+//    Base::Console().Message("QGIWS::draw()- {}\n", getFeature()->getNameInDocument());
     if (!isVisible()) {
         return;
     }
@@ -162,7 +162,7 @@ void QGIWeldSymbol::draw()
 
 void QGIWeldSymbol::drawTile(TechDraw::DrawTileWeld* tileFeat)
 {
-//    Base::Console().Message("QGIWS::drawTile() - tileFeat: %X\n", tileFeat);
+//    Base::Console().Message("QGIWS::drawTile() - tileFeat: {}\n", tileFeat);
     if (!tileFeat) {
         Base::Console().Message("QGIWS::drawTile - tile is null\n");
         return;
@@ -467,7 +467,7 @@ QPointF QGIWeldSymbol::getTailPoint()
 
 void QGIWeldSymbol::setFeature(TechDraw::DrawWeldSymbol* feat)
 {
-//    Base::Console().Message("QGIWS::setFeature(%s)\n", feat->getNameInDocument());
+//    Base::Console().Message("QGIWS::setFeature({})\n", feat->getNameInDocument());
     m_weldFeat = feat;
     m_weldFeatName = feat->getNameInDocument();
 }

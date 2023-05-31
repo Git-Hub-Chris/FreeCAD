@@ -201,7 +201,7 @@ QByteArray PythonOnlineHelp::loadResource(const QString& filename) const
         else {
             // get information about the error
             Base::PyException e;
-            //Base::Console().Error("loadResource: %s\n", e.what());
+            //Base::Console().Error("loadResource: {}\n", e.what());
             // load the error page
             //res = fileNotFound();
             res = loadFailed(QString::fromUtf8(e.what()));

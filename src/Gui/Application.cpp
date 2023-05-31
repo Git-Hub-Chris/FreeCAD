@@ -843,7 +843,7 @@ void Application::slotDeleteDocument(const App::Document& Doc)
 {
     std::map<const App::Document*, Gui::Document*>::iterator doc = d->documents.find(&Doc);
     if (doc == d->documents.end()) {
-        Base::Console().Log("GUI document '%s' already deleted\n", Doc.getName());
+        Base::Console().Log("GUI document '{}' already deleted\n", Doc.getName());
         return;
     }
 
@@ -1012,7 +1012,7 @@ void Application::onLastWindowClosed(Gui::Document* pcDoc)
     catch (const std::exception& e) {
         Base::Console().Error(
             "Unhandled std::exception caught in Application::onLastWindowClosed.\n"
-            "The error message is: %s\n",
+            "The error message is: {}\n",
             e.what());
     }
     catch (...) {
@@ -1178,7 +1178,7 @@ void Application::setActiveDocument(Gui::Document* pcDocument)
     if (d->activeDocument) {
         App::Document* doc = d->activeDocument->getDocument();
         Base::Console().Log(
-            "Active document is %s (at %p)\n", doc->getName(), static_cast<void*>(doc));
+            "Active document is {} (at {})\n", doc->getName(), static_cast<void*>(doc));
     }
     else {
         Base::Console().Log("No active document\n");
@@ -1252,7 +1252,7 @@ void Application::viewActivated(MDIView* pcView)
 {
 #ifdef FC_DEBUG
     // May be useful for error detection
-    Base::Console().Log("Active view is %s (at %p)\n",
+    Base::Console().Log("Active view is {} (at {})\n",
                  (const char*)pcView->windowTitle().toUtf8(),static_cast<void *>(pcView));
 #endif
 
@@ -1480,11 +1480,11 @@ bool Application::activateWorkbench(const char* name)
             match = rx.match(msg);
         }
 
-        Base::Console().Error("%s\n", (const char*)msg.toUtf8());
+        Base::Console().Error("{}\n", (const char*)msg.toUtf8());
         if (!d->startingUp)
-            Base::Console().Error("%s\n", e.getStackTrace().c_str());
+            Base::Console().Error("{}\n", e.getStackTrace().c_str());
         else
-            Base::Console().Log("%s\n", e.getStackTrace().c_str());
+            Base::Console().Log("{}\n", e.getStackTrace().c_str());
 
         if (!d->startingUp) {
             wc.restoreCursor();
@@ -1759,20 +1759,20 @@ void messageHandler(QtMsgType type, const QMessageLogContext &context, const QSt
     case QtInfoMsg:
     case QtDebugMsg:
 #ifdef FC_DEBUG
-        Base::Console().Message("%s\n", msg.toUtf8().constData());
+        Base::Console().Message("{}\n", msg.toUtf8().constData());
 #else
         // do not stress user with Qt internals but write to log file if enabled
-        Base::Console().Log("%s\n", msg.toUtf8().constData());
+        Base::Console().Log("{}\n", msg.toUtf8().constData());
 #endif
         break;
     case QtWarningMsg:
-        Base::Console().Warning("%s\n", msg.toUtf8().constData());
+        Base::Console().Warning("{}\n", msg.toUtf8().constData());
         break;
     case QtCriticalMsg:
-        Base::Console().Error("%s\n", msg.toUtf8().constData());
+        Base::Console().Error("{}\n", msg.toUtf8().constData());
         break;
     case QtFatalMsg:
-        Base::Console().Error("%s\n", msg.toUtf8().constData());
+        Base::Console().Error("{}\n", msg.toUtf8().constData());
         abort();                    // deliberately core dump
     }
 #ifdef FC_OS_WIN32
@@ -1791,13 +1791,13 @@ void messageHandlerCoin(const SoError * error, void * /*userdata*/)
         switch (dbg->getSeverity())
         {
         case SoDebugError::INFO:
-            Base::Console().Message("%s\n", msg);
+            Base::Console().Message("{}\n", msg);
             break;
         case SoDebugError::WARNING:
-            Base::Console().Warning("%s\n", msg);
+            Base::Console().Warning("{}\n", msg);
             break;
         default: // error
-            Base::Console().Error("%s\n", msg);
+            Base::Console().Error("{}\n", msg);
             break;
         }
 #ifdef FC_OS_WIN32
@@ -2182,7 +2182,7 @@ void Application::runApplication()
             int major = context.format().majorVersion();
             int minor = context.format().minorVersion();
             const char* glVersion = reinterpret_cast<const char*>(glGetString(GL_VERSION));
-            Base::Console().Log("OpenGL version is: %d.%d (%s)\n", major, minor, glVersion);
+            Base::Console().Log("OpenGL version is: {}.{} ({})\n", major, minor, glVersion);
         }
     }
 
@@ -2235,7 +2235,7 @@ void Application::runApplication()
         setImportImageFormats();
     }
     catch (const Base::Exception& e) {
-        Base::Console().Error("Error in FreeCADGuiInit.py: %s\n", e.what());
+        Base::Console().Error("Error in FreeCADGuiInit.py: {}\n", e.what());
         mw.stopSplasher();
         throw;
     }
@@ -2247,7 +2247,7 @@ void Application::runApplication()
 
     // Activate the correct workbench
     std::string start = App::Application::Config()["StartWorkbench"];
-    Base::Console().Log("Init: Activating default workbench %s\n", start.c_str());
+    Base::Console().Log("Init: Activating default workbench {}\n", start.c_str());
     std::string autoload =
         App::GetApplication()
             .GetParameterGroupByPath("User parameter:BaseApp/Preferences/General")
@@ -2361,7 +2361,7 @@ void Application::runApplication()
         }
         catch (const boost::interprocess::interprocess_exception& e) {
             QString msg = QString::fromLocal8Bit(e.what());
-            Base::Console().Warning("Failed to create a file lock for the IPC: %s\n",
+            Base::Console().Warning("Failed to create a file lock for the IPC: {}\n",
                                     msg.toUtf8().constData());
         }
 
@@ -2386,7 +2386,7 @@ void Application::runApplication()
     }
     catch (const std::exception& e) {
         // catching nasty stuff coming out of the event loop
-        Base::Console().Error("Event loop left through unhandled exception: %s\n", e.what());
+        Base::Console().Error("Event loop left through unhandled exception: {}\n", e.what());
         App::Application::destructObserver();
         throw;
     }
@@ -2535,7 +2535,7 @@ void Application::checkForPreviousCrashes()
     }
     catch (const boost::interprocess::interprocess_exception& e) {
         QString msg = QString::fromLocal8Bit(e.what());
-        Base::Console().Warning("Failed check for previous crashes because of IPC error: %s\n",
+        Base::Console().Warning("Failed check for previous crashes because of IPC error: {}\n",
                                 msg.toUtf8().constData());
     }
 }

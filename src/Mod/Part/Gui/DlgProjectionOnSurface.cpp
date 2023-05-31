@@ -185,7 +185,7 @@ DlgProjectionOnSurface::~DlgProjectionOnSurface()
       higlight_object(it.partFeature, it.partName, false, 0);
     }
     catch (Standard_NoSuchObject& e) {
-      Base::Console().Warning("DlgProjectionOnSurface::~DlgProjectionOnSurface: %s", e.GetMessageString());
+      Base::Console().Warning("DlgProjectionOnSurface::~DlgProjectionOnSurface: {}", e.GetMessageString());
     }
     PartGui::ViewProviderPartExt* vp = dynamic_cast<PartGui::ViewProviderPartExt*>(Gui::Application::Instance->getViewProvider(it.partFeature));
     if (vp)
@@ -200,7 +200,7 @@ DlgProjectionOnSurface::~DlgProjectionOnSurface()
       higlight_object(it.partFeature, it.partName, false, 0);
     }
     catch (Standard_NoSuchObject& e) {
-      Base::Console().Warning("DlgProjectionOnSurface::~DlgProjectionOnSurface: %s", e.GetMessageString());
+      Base::Console().Warning("DlgProjectionOnSurface::~DlgProjectionOnSurface: {}", e.GetMessageString());
     }
   }
   Gui::Selection().rmvSelectionGate();

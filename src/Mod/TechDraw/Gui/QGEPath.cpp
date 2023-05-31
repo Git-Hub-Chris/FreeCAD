@@ -49,13 +49,13 @@ using namespace TechDraw;
 QGMarker::QGMarker(int idx) : QGIVertex(idx),
     m_dragging(false)
 {
-//    Base::Console().Message("QGMarker::QGMarker(%d)\n", idx);
+//    Base::Console().Message("QGMarker::QGMarker({})\n", idx);
     setFlag(QGraphicsItem::ItemIsMovable, true);
 }
 
 void QGMarker::mousePressEvent(QGraphicsSceneMouseEvent * event)
 {
-//    Base::Console().Message("QGMarker::mousePressEvent() - focustype: %d\n",
+//    Base::Console().Message("QGMarker::mousePressEvent() - focustype: {}\n",
 //                            scene()->focusItem()->type() - QGraphicsItem::UserType);
 
     if (event->button() == Qt::RightButton) {    //we're done
@@ -90,7 +90,7 @@ void QGMarker::mouseReleaseEvent(QGraphicsSceneMouseEvent * event)
 
 void QGMarker::mouseDoubleClickEvent(QGraphicsSceneMouseEvent * event)
 {
-//    Base::Console().Message("QGMarker::mouseDoubleClickEvent(%d)\n", getProjIndex());
+//    Base::Console().Message("QGMarker::mouseDoubleClickEvent({})\n", getProjIndex());
     if (event->button() == Qt::RightButton) {    //we're done
         Q_EMIT endEdit();
         return;
@@ -100,7 +100,7 @@ void QGMarker::mouseDoubleClickEvent(QGraphicsSceneMouseEvent * event)
 
 void QGMarker::keyPressEvent(QKeyEvent * event)
 {
-//    Base::Console().Message("QGMarker::keyPressEvent(%d)\n", getProjIndex());
+//    Base::Console().Message("QGMarker::keyPressEvent({})\n", getProjIndex());
     if (event->key() == Qt::Key_Escape) {
         Q_EMIT endEdit();
     }
@@ -145,7 +145,7 @@ QGEPath::QGEPath(QGILeaderLine* leader) :
 
 QVariant QGEPath::itemChange(GraphicsItemChange change, const QVariant &value)
 {
-//    Base::Console().Message("QGEP::itemChange(%d) - type: %d\n", change, type() - QGraphicsItem::UserType);
+//    Base::Console().Message("QGEP::itemChange({}) - type: {}\n", change, type() - QGraphicsItem::UserType);
     if (change == ItemSelectedHasChanged && scene()) {
         if(isSelected()) {
             Q_EMIT selected(true);
@@ -266,7 +266,7 @@ void QGEPath::clearMarkers()
 // end of node marker drag
 void QGEPath::onDragFinished(QPointF dragEndPos, int markerIndex)
 {
-//    Base::Console().Message("QGEPath::onDragFinished(%s, %d)\n",
+//    Base::Console().Message("QGEPath::onDragFinished({}, {})\n",
 //                            TechDraw::DrawUtil::formatVector(dragEndPos).c_str(),
 //                            markerIndex);
     if ((int) m_ghostPoints.size() > markerIndex) {
@@ -333,7 +333,7 @@ std::vector<QPointF> QGEPath::getDeltasFromLeader()
 //announce points editing is finished
 void QGEPath::updateParent()
 {
-//    Base::Console().Message("QGEPath::updateParent() - inEdit: %d pts: %d\n", inEdit(), m_ghostPoints.size());
+//    Base::Console().Message("QGEPath::updateParent() - inEdit: {} pts: {}\n", inEdit(), m_ghostPoints.size());
 //    dumpGhostPoints("QGEP::updateParent");
     QPointF attach = m_ghostPoints.front();
     if (!inEdit()) {
@@ -390,7 +390,7 @@ void QGEPath::dumpGhostPoints(const char* text)
 {
     int idb = 0;
     for (auto& d: m_ghostPoints) {
-        Base::Console().Message("%s - point: %d %s\n", text,
+        Base::Console().Message("{} - point: {} {}\n", text,
                                  idb, TechDraw::DrawUtil::formatVector(d).c_str());
         idb++;
     }
@@ -400,7 +400,7 @@ void QGEPath::dumpMarkerPos(const char* text)
 {
     int idb = 0;
     for (auto& m: m_markers) {
-        Base::Console().Message("QGEP - %s - markerPos: %d %s\n", text,
+        Base::Console().Message("QGEP - {} - markerPos: {} {}\n", text,
                                  idb, TechDraw::DrawUtil::formatVector(m->pos()).c_str());
         idb++;
     }

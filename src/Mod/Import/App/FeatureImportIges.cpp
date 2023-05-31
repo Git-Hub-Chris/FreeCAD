@@ -58,7 +58,7 @@ Standard_Integer FeatureImportIges::Execute(void)
     {
       _close(i);
     }else{
-      Base::Console().Log("FeaturePartImportIges::Execute() not able to open %s!\n",FileName.c_str());
+      Base::Console().Log("FeaturePartImportIges::Execute() not able to open {}!\n",FileName.c_str());
           return 1;
     }
 

@@ -730,13 +730,13 @@ void Document::onChanged(const Property* prop)
         if (!TransDirNew.exists()) {
             if (TransDirOld.exists()) {
                 if (!TransDirOld.renameFile(new_dir.c_str()))
-                    Base::Console().Warning("Failed to rename '%s' to '%s'\n", old_dir.c_str(), new_dir.c_str());
+                    Base::Console().Warning("Failed to rename '{}' to '{}'\n", old_dir.c_str(), new_dir.c_str());
                 else
                     this->TransientDir.setValue(new_dir);
             }
             else {
                 if (!TransDirNew.createDirectories())
-                    Base::Console().Warning("Failed to create '%s'\n", new_dir.c_str());
+                    Base::Console().Warning("Failed to create '{}'\n", new_dir.c_str());
                 else
                     this->TransientDir.setValue(new_dir);
             }
@@ -747,7 +747,7 @@ void Document::onChanged(const Property* prop)
             // make sure that the uuid is unique
             std::string uuid = this->Uid.getValueStr();
             Base::Uuid id;
-            Base::Console().Warning("Document with the UUID '%s' already exists, change to '%s'\n",
+            Base::Console().Warning("Document with the UUID '{}' already exists, change to '{}'\n",
                                     uuid.c_str(), id.getValue().c_str());
             // recursive call of onChanged()
             this->Uid.setValue(id);
@@ -792,7 +792,7 @@ Document::Document(const char* documentName)
     d->DocumentPythonObject = Py::Object(new DocumentPy(this), true);
 
 #ifdef FC_LOGUPDATECHAIN
-    Console().Log("+App::Document: %p\n", this);
+    Console().Log("+App::Document: {}\n", this);
 #endif
     std::string CreationDateString = Base::TimeInfo::currentDateTimeString();
     std::string Author = App::GetApplication()
@@ -862,7 +862,7 @@ Document::Document(const char* documentName)
 Document::~Document()
 {
 #ifdef FC_LOGUPDATECHAIN
-    Console().Log("-App::Document: %s %p\n",getName(), this);
+    Console().Log("-App::Document: {} {}\n",getName(), this);
 #endif
 
     try {
@@ -872,7 +872,7 @@ Document::~Document()
     }
 
 #ifdef FC_LOGUPDATECHAIN
-    Console().Log("-Delete Features of %s \n",getName());
+    Console().Log("-Delete Features of {} \n",getName());
 #endif
 
     d->clearDocument();
@@ -981,7 +981,7 @@ void Document::Restore(Base::XMLReader &reader)
                 addObject(type.c_str(), name.c_str(), /*isNew=*/ false);
             }
             catch ( Base::Exception& ) {
-                Base::Console().Message("Cannot create object '%s'\n", name.c_str());
+                Base::Console().Message("Cannot create object '{}'\n", name.c_str());
             }
         }
         reader.readEndElement("Features");
@@ -1332,7 +1332,7 @@ Document::readObjects(Base::XMLReader& reader)
             }
         }
         catch (const Base::Exception& e) {
-            Base::Console().Error("Cannot create object '%s': (%s)\n", name.c_str(), e.what());
+            Base::Console().Error("Cannot create object '{}': ({})\n", name.c_str(), e.what());
         }
     }
     if(!testStatus(Status::Importing))
@@ -1376,7 +1376,7 @@ Document::readObjects(Base::XMLReader& reader)
             pObj->setStatus(ObjectStatus::Restore, false);
 
             if (reader.testStatus(Base::XMLReader::ReaderStatus::PartialRestoreInDocumentObject)) {
-                Base::Console().Error("Object \"%s\" was subject to a partial restore. As a result geometry may have changed or be incomplete.\n",name.c_str());
+                Base::Console().Error("Object \"{}\" was subject to a partial restore. As a result geometry may have changed or be incomplete.\n",name.c_str());
                 reader.clearPartialRestoreDocumentObject();
             }
         }
@@ -1702,12 +1702,12 @@ private:
                                 try {
                                     if (!it->deleteFile()) {
                                         backupManagementError = true;
-                                        Base::Console().Warning("Cannot remove backup file : %s\n", it->fileName().c_str());
+                                        Base::Console().Warning("Cannot remove backup file : {}\n", it->fileName().c_str());
                                     }
                                 }
                                 catch (...) {
                                     backupManagementError = true;
-                                    Base::Console().Warning("Cannot remove backup file : %s\n", it->fileName().c_str());
+                                    Base::Console().Warning("Cannot remove backup file : {}\n", it->fileName().c_str());
                                 }
                             }
                         }
@@ -1774,7 +1774,7 @@ private:
                     fi.deleteFile();
                 }
                 catch (...) {
-                    Base::Console().Warning("Cannot remove backup file: %s\n", fi.fileName().c_str());
+                    Base::Console().Warning("Cannot remove backup file: {}\n", fi.fileName().c_str());
                     backupManagementError = true;
                 }
             }
@@ -2010,7 +2010,7 @@ void Document::restore (const char *filename,
     try {
         Document::Restore(reader);
     } catch (const Base::Exception& e) {
-        Base::Console().Error("Invalid Document.xml: %s\n", e.what());
+        Base::Console().Error("Invalid Document.xml: {}\n", e.what());
         setStatus(Document::RestoreError, true);
     }
 

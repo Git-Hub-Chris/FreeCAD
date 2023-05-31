@@ -60,7 +60,7 @@ std::string DimensionFormatter::formatValue(qreal value,
                                             int partial,
                                             bool isDim)
 {
-//    Base::Console().Message("DF::formatValue() - %s isRestoring: %d\n",
+//    Base::Console().Message("DF::formatValue() - {} isRestoring: {}\n",
 //                            m_dimension->getNameInDocument(), m_dimension->isRestoring());
     bool angularMeasure = false;
     QLocale loc;
@@ -96,7 +96,7 @@ std::string DimensionFormatter::formatValue(qreal value,
     } else {
         //not multivalue schema
         if (formatSpecifier.isEmpty()) {
-            Base::Console().Warning("Warning - no numeric format in Format Spec %s - %s\n",
+            Base::Console().Warning("Warning - no numeric format in Format Spec {} - {}\n",
                                     qPrintable(qFormatSpec), m_dimension->getNameInDocument());
             return Base::Tools::toStdString(qFormatSpec);
         }
@@ -133,7 +133,7 @@ std::string DimensionFormatter::formatValue(qreal value,
         }
 
         if (isTooSmall(userVal, formatSpecifier)) {
-            Base::Console().Warning("Dimension %s value %.6f is too small for format specifier: %s\n",
+            Base::Console().Warning("Dimension {} value {:.6f} is too small for format specifier: {}\n",
                             m_dimension->getNameInDocument(), userVal, qPrintable(formatSpecifier));
         }
 
@@ -356,7 +356,7 @@ QStringList DimensionFormatter::getPrefixSuffixSpec(QString fSpec)
         result.append(formatSuffix);
         result.append(match);
     } else {       //printf format not found!
-        Base::Console().Warning("Warning - no numeric format in formatSpec %s - %s\n",
+        Base::Console().Warning("Warning - no numeric format in formatSpec {} - {}\n",
                                 qPrintable(fSpec), m_dimension->getNameInDocument());
         result.append(QString());
         result.append(QString());

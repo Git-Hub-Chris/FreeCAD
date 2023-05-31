@@ -151,7 +151,7 @@ CurveConverter::CurveConverter()
     catch (const Base::ValueError& e) {// ensure that if parameter strings are not well-formed, the
                                        // exception is not propagated
         Base::Console().DeveloperError(
-            "CurveConverter", "Malformed parameter string: %s\n", e.what());
+            "CurveConverter", "Malformed parameter string: {}\n", e.what());
     }
 
     updateCurvedEdgeCountSegmentsParameter();
@@ -168,7 +168,7 @@ CurveConverter::~CurveConverter()
                e) {// ensure that if parameter strings are not well-formed, the program is not
                    // terminated when calling the noexcept destructor.
         Base::Console().DeveloperError(
-            "CurveConverter", "Malformed parameter string: %s\n", e.what());
+            "CurveConverter", "Malformed parameter string: {}\n", e.what());
     }
 }
 

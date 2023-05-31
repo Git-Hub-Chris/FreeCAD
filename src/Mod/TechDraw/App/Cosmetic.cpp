@@ -69,8 +69,8 @@ LineFormat::LineFormat(int style,
 
 void LineFormat::dump(const char* title)
 {
-    Base::Console().Message("LF::dump - %s \n", title);
-    Base::Console().Message("LF::dump - %s \n", toString().c_str());
+    Base::Console().Message("LF::dump - {} \n", title);
+    Base::Console().Message("LF::dump - {} \n", toString().c_str());
 }
 
 std::string LineFormat::toString() const
@@ -209,8 +209,8 @@ std::string CosmeticEdge::toString() const
 
 void CosmeticEdge::dump(const char* title)
 {
-    Base::Console().Message("CE::dump - %s \n", title);
-    Base::Console().Message("CE::dump - %s \n", toString().c_str());
+    Base::Console().Message("CE::dump - {} \n", title);
+    Base::Console().Message("CE::dump - {} \n", toString().c_str());
 }
 
 // Persistence implementers
@@ -238,7 +238,7 @@ void CosmeticEdge::Save(Base::Writer &writer) const
         TechDraw::AOCPtr aoc = std::static_pointer_cast<TechDraw::AOC>(m_geometry);
         aoc->Save(writer);
     } else {
-        Base::Console().Warning("CE::Save - unimplemented geomType: %d\n", static_cast<int>(m_geometry->getGeomType()));
+        Base::Console().Warning("CE::Save - unimplemented geomType: {}\n", static_cast<int>(m_geometry->getGeomType()));
     }
 }
 
@@ -284,7 +284,7 @@ void CosmeticEdge::Restore(Base::XMLReader &reader)
         permaEnd   = aoc->endPnt;
         permaRadius = aoc->radius;
     } else {
-        Base::Console().Warning("CE::Restore - unimplemented geomType: %d\n", static_cast<int>(gType));
+        Base::Console().Warning("CE::Restore - unimplemented geomType: {}\n", static_cast<int>(gType));
     }
 }
 
@@ -392,8 +392,8 @@ GeomFormat::~GeomFormat()
 
 void GeomFormat::dump(const char* title) const
 {
-    Base::Console().Message("GF::dump - %s \n", title);
-    Base::Console().Message("GF::dump - %s \n", toString().c_str());
+    Base::Console().Message("GF::dump - {} \n", title);
+    Base::Console().Message("GF::dump - {} \n", toString().c_str());
 }
 
 std::string GeomFormat::toString() const

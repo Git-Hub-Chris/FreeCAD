@@ -193,15 +193,15 @@ void DlgPreferencesImp::createPageInGroup(QTabWidget *tabWidget, const std::stri
             page->setProperty("PageName", QVariant(QString::fromStdString(pageName)));
         }
         else {
-            Base::Console().Warning("%s is not a preference page\n", pageName.c_str());
+            Base::Console().Warning("{} is not a preference page\n", pageName.c_str());
         }
     }
     catch (const Base::Exception& e) {
-        Base::Console().Error("Base exception thrown for '%s'\n", pageName.c_str());
+        Base::Console().Error("Base exception thrown for '{}'\n", pageName.c_str());
         e.ReportException();
     }
     catch (const std::exception& e) {
-        Base::Console().Error("C++ exception thrown for '%s' (%s)\n", pageName.c_str(), e.what());
+        Base::Console().Error("C++ exception thrown for '{}' ({})\n", pageName.c_str(), e.what());
     }
 }
 
