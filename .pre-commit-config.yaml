@@ -32,6 +32,7 @@ files: |
     )
 exclude: |
     (?x)^(
+        src/Tools/generateBase/generateModel_Module.py|
         .*vcproj.*|
         .*vcxproj.*|
         src/Mod/Import/App/SCL|
