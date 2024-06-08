@@ -60,3 +60,5 @@ src/Tools/freecad.zip
 tsupdate_stderr.log
 tsupdate_stdout.log
 files_to_translate.txt
+build-for-linux.sh
+nglib.h
