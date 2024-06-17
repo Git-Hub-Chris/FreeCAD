@@ -45,10 +45,20 @@ if App.GuiUp:
 class Proxy(object):
 
     BaseType = "Fem::FemSolverObjectPython"
+    MeshTypes = [".unv"]
+
 
     def __init__(self, obj):
         obj.Proxy = self
         obj.addExtension("App::GroupExtensionPython")
+        self._addMeshFormatProperty(obj)
+
+    def _addMeshFormatProperty(self, obj):
+        if not hasattr(obj, "MeshFormat"):
+            obj.addProperty("App::PropertyEnumeration", "MeshFormat", "Fem", "Mesh format for Gmsh output")
+            obj.MeshFormat = self.MeshTypes
+            obj.MeshFormat = ".unv"
+
 
     def createMachine(self, obj, directory, testmode):
         raise NotImplementedError()

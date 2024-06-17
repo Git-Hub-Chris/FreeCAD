@@ -147,6 +147,7 @@ SET(FemInOut_SRCS
     feminout/importCcxFrdResults.py
     feminout/importFenicsMesh.py
     feminout/importInpMesh.py
+    feminout/importMshMesh.py
     feminout/importPyMesh.py
     feminout/importToolsFem.py
     feminout/importVTKResults.py
@@ -399,6 +400,8 @@ SET(FemTestsMesh_SRCS
     femtest/data/mesh/tetra10_mesh.vtk
     femtest/data/mesh/tetra10_mesh.yml
     femtest/data/mesh/tetra10_mesh.z88
+    femtest/data/mesh/tetra10_mesh.msh
+    femtest/data/mesh/beam_mesh.msh
 )
 
 SET(FemTestsMystran_SRCS

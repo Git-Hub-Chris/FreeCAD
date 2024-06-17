@@ -30,6 +30,7 @@ import unittest
 import FreeCAD
 
 import ObjectsFem
+import femsolver.solverbase as solverbase
 from . import support_utils as testtools
 from .support_utils import fcc_print
 
@@ -139,3 +140,24 @@ class TestFemCommon(unittest.TestCase):
                 # to get an error message what was going wrong
                 __import__("{0}".format(mod))
             self.assertTrue(im, "Problem importing {0}".format(mod))
+
+    def test_solver_mesh_format_property(self):
+
+        solver = self.document.addObject("Fem::FemSolverObjectPython", "Solver")
+        proxy = solverbase.Proxy(solver)
+
+        self.assertTrue(hasattr(solver, "MeshFormat"))
+
+        solver.MeshFormat = ".unv"
+
+        self.assertEqual(solver.MeshFormat, ".unv")
+
+        with self.assertRaises(ValueError):
+            solver.MeshFormat = ".vtk"
+
+        with self.assertRaises(ValueError):
+            solver.MeshFormat = ".inp"
+
+        self.assertEqual(solver.MeshFormat, ".unv")
+
+
