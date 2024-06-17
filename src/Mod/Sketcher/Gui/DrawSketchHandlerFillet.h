@@ -314,18 +314,18 @@ private:
 
         if (constructionMethod() == DrawSketchHandlerFillet::ConstructionMethod::Fillet) {
             if (preserveCorner) {
-                return QString::fromLatin1("Sketcher_Pointer_Create_PointFillet");
+                return QLatin1String("Sketcher_Pointer_Create_PointFillet");
             }
             else {
-                return QString::fromLatin1("Sketcher_Pointer_Create_Fillet");
+                return QLatin1String("Sketcher_Pointer_Create_Fillet");
             }
         }
         else {
             if (preserveCorner) {
-                return QString::fromLatin1("Sketcher_Pointer_Create_PointChamfer");
+                return QLatin1String("Sketcher_Pointer_Create_PointChamfer");
             }
             else {
-                return QString::fromLatin1("Sketcher_Pointer_Create_Chamfer");
+                return QLatin1String("Sketcher_Pointer_Create_Chamfer");
             }
         }
     }
@@ -415,7 +415,7 @@ template<>
 void DSHFilletController::configureToolWidget()
 {
     if (!init) {  // Code to be executed only upon initialisation
-        QStringList names = {QStringLiteral("Fillet"), QStringLiteral("Chamfer")};
+        QStringList names = {QLatin1String("Fillet"), QStringLiteral("Chamfer")};
         toolWidget->setComboboxElements(WCombobox::FirstCombo, names);
 
         toolWidget->setComboboxItemIcon(

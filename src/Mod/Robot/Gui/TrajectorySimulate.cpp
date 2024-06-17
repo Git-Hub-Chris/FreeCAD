@@ -63,39 +63,29 @@ TrajectorySimulate::TrajectorySimulate(Robot::RobotObject* pcRobotObject,
         Robot::Waypoint pt = trac.getWaypoint(i);
         switch (pt.Type) {
             case Robot::Waypoint::UNDEF:
-                ui->trajectoryTable->setItem(i,
-                                             0,
-                                             new QTableWidgetItem(QString::fromLatin1("UNDEF")));
+                ui->trajectoryTable->setItem(i, 0, new QTableWidgetItem(QLatin1String("UNDEF")));
                 break;
             case Robot::Waypoint::CIRC:
-                ui->trajectoryTable->setItem(i,
-                                             0,
-                                             new QTableWidgetItem(QString::fromLatin1("CIRC")));
+                ui->trajectoryTable->setItem(i, 0, new QTableWidgetItem(QLatin1String("CIRC")));
                 break;
             case Robot::Waypoint::PTP:
-                ui->trajectoryTable->setItem(i,
-                                             0,
-                                             new QTableWidgetItem(QString::fromLatin1("PTP")));
+                ui->trajectoryTable->setItem(i, 0, new QTableWidgetItem(QLatin1String("PTP")));
                 break;
             case Robot::Waypoint::LINE:
-                ui->trajectoryTable->setItem(i,
-                                             0,
-                                             new QTableWidgetItem(QString::fromLatin1("LIN")));
+                ui->trajectoryTable->setItem(i, 0, new QTableWidgetItem(QLatin1String("LIN")));
                 break;
             default:
-                ui->trajectoryTable->setItem(i,
-                                             0,
-                                             new QTableWidgetItem(QString::fromLatin1("UNDEF")));
+                ui->trajectoryTable->setItem(i, 0, new QTableWidgetItem(QLatin1String("UNDEF")));
                 break;
         }
         ui->trajectoryTable->setItem(i,
                                      1,
                                      new QTableWidgetItem(QString::fromUtf8(pt.Name.c_str())));
         if (pt.Cont) {
-            ui->trajectoryTable->setItem(i, 2, new QTableWidgetItem(QString::fromLatin1("|")));
+            ui->trajectoryTable->setItem(i, 2, new QTableWidgetItem(QLatin1String("|")));
         }
         else {
-            ui->trajectoryTable->setItem(i, 2, new QTableWidgetItem(QString::fromLatin1("-")));
+            ui->trajectoryTable->setItem(i, 2, new QTableWidgetItem(QLatin1String("-")));
         }
         ui->trajectoryTable->setItem(i, 3, new QTableWidgetItem(QString::number(pt.Velocity)));
         ui->trajectoryTable->setItem(i, 4, new QTableWidgetItem(QString::number(pt.Acceleration)));

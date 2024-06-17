@@ -135,14 +135,14 @@ void StartupProcess::setStyleSheetPaths()
         (App::Application::getUserAppDataDir() + "Gui/Stylesheets/").c_str())
             << QString::fromUtf8((App::Application::getResourceDir() + "Gui/Stylesheets/").c_str())
             << QLatin1String(":/stylesheets");
-    QDir::setSearchPaths(QString::fromLatin1("qss"), qssPaths);
+    QDir::setSearchPaths(QLatin1String("qss"), qssPaths);
     // setup the search paths for Qt overlay style sheets
     QStringList qssOverlayPaths;
     qssOverlayPaths << QString::fromUtf8((App::Application::getUserAppDataDir()
                         + "Gui/Stylesheets/overlay").c_str())
                     << QString::fromUtf8((App::Application::getResourceDir()
                         + "Gui/Stylesheets/overlay").c_str());
-    QDir::setSearchPaths(QStringLiteral("overlay"), qssOverlayPaths);
+    QDir::setSearchPaths(QLatin1String("overlay"), qssOverlayPaths);
 }
 
 void StartupProcess::setImagePaths()
@@ -152,7 +152,7 @@ void StartupProcess::setImagePaths()
     imagePaths << QString::fromUtf8((App::Application::getUserAppDataDir() + "Gui/images").c_str())
             << QString::fromUtf8((App::Application::getUserAppDataDir() + "pixmaps").c_str())
             << QLatin1String(":/icons");
-    QDir::setSearchPaths(QString::fromLatin1("images"), imagePaths);
+    QDir::setSearchPaths(QLatin1String("images"), imagePaths);
 }
 
 void StartupProcess::registerEventType()
@@ -167,7 +167,7 @@ void StartupProcess::setThemePaths()
         "User parameter:BaseApp/Preferences/Bitmaps/Theme");
 #if !defined(Q_OS_LINUX)
     QIcon::setThemeSearchPaths(QIcon::themeSearchPaths()
-                            << QString::fromLatin1(":/icons/FreeCAD-default"));
+                            << QLatin1String(":/icons/FreeCAD-default"));
     QIcon::setThemeName(QLatin1String("FreeCAD-default"));
 #else
     // Option to opt-out from using a Linux desktop icon theme.
@@ -343,10 +343,10 @@ void StartupPostProcess::checkOpenGL()
                             "Please upgrade your graphics driver and/or card as required.")
                     .arg(major)
                     .arg(minor)
-                + QStringLiteral("\n");
+                + QLatin1String("\n");
             Base::Console().Warning(message.toStdString().c_str());
             Dialog::DlgCheckableMessageBox::showMessage(
-                QCoreApplication::applicationName() + QStringLiteral(" - ")
+                QCoreApplication::applicationName() + QLatin1String(" - ")
                     + QObject::tr("Invalid OpenGL Version"),
                 message);
         }

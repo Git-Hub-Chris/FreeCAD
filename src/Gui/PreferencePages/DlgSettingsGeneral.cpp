@@ -299,7 +299,7 @@ void DlgSettingsGeneral::loadSettings()
     int index = 1;
     TStringMap list = Translator::instance()->supportedLocales();
     ui->Languages->clear();
-    ui->Languages->addItem(QString::fromLatin1("English"), QByteArray("English"));
+    ui->Languages->addItem(QLatin1String("English"), QByteArray("English"));
     for (auto it = list.begin(); it != list.end(); ++it, index++) {
         QByteArray lang = it->first.c_str();
         QString langname = QString::fromLatin1(lang.constData());
@@ -607,7 +607,7 @@ void DlgSettingsGeneral::recreatePreferencePackMenu()
             if (tagString.isEmpty())
                 tagString.append(QString::fromStdString(tag));
             else
-                tagString.append(QStringLiteral(", ") + QString::fromStdString(tag));
+                tagString.append(QLatin1String(", ") + QString::fromStdString(tag));
         }
         auto kind = new QTableWidgetItem(tagString);
         ui->PreferencePacks->setItem(row, 1, kind);
