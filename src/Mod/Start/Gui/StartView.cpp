@@ -129,12 +129,6 @@ StartView::StartView(QWidget* parent)
         firstStartRegion->addWidget(firstStartWidget);
         firstStartRegion->addStretch();
         layout->addLayout(firstStartRegion);
-
-        // Try to further differentiate the checkbox below, when the First Start box is shown
-        auto line = new QFrame();
-        line->setFrameShape(QFrame::HLine);
-        line->setFrameShadow(QFrame::Sunken);
-        layout->addWidget(line);
     }
 
     // Launch start automatically?
