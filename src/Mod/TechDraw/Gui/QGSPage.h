@@ -147,10 +147,13 @@ public:
     void setBalloonGroups();
     void setLeaderParentage();
 
+    void handleRubberBandSelection();
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
+    void keyPressEvent(QKeyEvent* keyEvent) override;
+    void keyReleaseEvent(QKeyEvent* keyEvent) override;
 
     QColor getBackgroundColor();
     bool orphanExists(const char* viewName, const std::vector<App::DocumentObject*>& list);
@@ -158,6 +161,9 @@ protected:
 private:
     QGITemplate* pageTemplate;
     ViewProviderPage* m_vpPage;
+    bool isEKeyPressed = false;
+    bool isVKeyPressed = false;
+    bool isFKeyPressed = false;
 
     bool m_exportingSvg{false};
     bool m_exportingPdf{false};
