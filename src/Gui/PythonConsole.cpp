@@ -43,7 +43,6 @@
 #include "PythonConsolePy.h"
 #include "PythonTracing.h"
 #include "Application.h"
-#include "CallTips.h"
 #include "FileDialog.h"
 #include "MainWindow.h"
 #include "Tools.h"
@@ -90,7 +89,6 @@ struct PythonConsoleP
     CopyType type;
     PyObject *_stdoutPy=nullptr, *_stderrPy=nullptr, *_stdinPy=nullptr, *_stdin=nullptr;
     InteractiveInterpreter* interpreter=nullptr;
-    CallTipsList* callTipsList=nullptr;
     ConsoleHistory history;
     QString output, error, info, historyFile;
     QStringList statements;
@@ -452,16 +450,6 @@ PythonConsole::PythonConsole(QWidget *parent)
     pythonSyntax = new PythonConsoleHighlighter(this);
     pythonSyntax->setDocument(this->document());
 
-    // create the window for call tips
-    d->callTipsList = new CallTipsList(this);
-    d->callTipsList->setFrameStyle(QFrame::Box);
-    d->callTipsList->setFrameShadow(QFrame::Raised);
-    d->callTipsList->setLineWidth(2);
-    installEventFilter(d->callTipsList);
-    viewport()->installEventFilter(d->callTipsList);
-    d->callTipsList->setSelectionMode( QAbstractItemView::SingleSelection );
-    d->callTipsList->hide();
-
     QFont serifFont(QLatin1String("Courier"), 10, QFont::Normal);
     setFont(serifFont);
 
@@ -574,6 +562,18 @@ void PythonConsole::OnChange(Base::Subject<const char*> &rCaller, const char* sR
     }
 }
 
+int PythonConsole::getInputStringPosition()
+{
+    QString rawLine = textCursor().block().text();
+    return textCursor().positionInBlock() - promptLength(rawLine);
+}
+
+QString PythonConsole::getInputString()
+{
+    QString rawLine = textCursor().block().text();
+    return stripPromptFrom(rawLine);
+}
+
 /**
  * Checks the input of the console to make the correct indentations.
  * After a command is prompted completely the Python interpreter is started.
@@ -663,21 +663,6 @@ void PythonConsole::keyPressEvent(QKeyEvent * e)
               runSource( inputStrg );         //< commit input string
           }   break;
 
-          case Qt::Key_Period:
-          {
-              // In Qt 4.8 there is a strange behaviour because when pressing ":"
-              // then key is also set to 'Period' instead of 'Colon'. So we have
-              // to make sure we only handle the period.
-              if (e->text() == QLatin1String(".")) {
-                  // analyse context and show available call tips
-                  int contextLength = cursor.position() - inputLineBegin.position();
-                  TextEdit::keyPressEvent(e);
-                  d->callTipsList->showTips( inputStrg.left( contextLength ) );
-              }
-              else {
-                  TextEdit::keyPressEvent(e);
-              }
-          }   break;
 
           case Qt::Key_Home:
           {
@@ -728,10 +713,6 @@ void PythonConsole::keyPressEvent(QKeyEvent * e)
               TextEdit::keyPressEvent(e);
           }   break;
         }
-        // This can't be done in CallTipsList::eventFilter() because we must first perform
-        // the event and afterwards update the list widget
-        if (d->callTipsList->isVisible())
-            { d->callTipsList->validateCursor(); }
 
         // disable history restart if input line changed
         restartHistory &= (inputLine != inputBlock.text());
