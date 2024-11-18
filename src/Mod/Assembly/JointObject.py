@@ -1197,6 +1197,7 @@ class TaskAssemblyCreateJoint(QtCore.QObject):
         else:
             self.activeType = "Assembly"
             self.assembly.ensureIdentityPlacements()
+            self.transparency_backups = UtilsAssembly.get_transparency_backups(self.assembly)
 
         self.doc = self.assembly.Document
         self.gui_doc = Gui.getDocument(self.doc)
@@ -1343,6 +1344,7 @@ class TaskAssemblyCreateJoint(QtCore.QObject):
             self.assembly.ViewObject.MoveOnlyPreselected = False
             self.assembly.ViewObject.MoveInCommand = True
 
+        UtilsAssembly.restore_transparency_backups(self.transparency_backups)
         Gui.Selection.removeSelectionGate()
         Gui.Selection.removeObserver(self)
         Gui.Selection.setSelectionStyle(Gui.Selection.SelectionStyle.NormalSelection)
@@ -1602,6 +1604,7 @@ class TaskAssemblyCreateJoint(QtCore.QObject):
 
         self.form.jointType.setCurrentIndex(JointTypes.index(self.joint.JointType))
         self.updateJointList()
+        self.updateTransparencies()
 
     def updateJoint(self):
         # First we build the listwidget
@@ -1609,6 +1612,9 @@ class TaskAssemblyCreateJoint(QtCore.QObject):
 
         # Then we pass the new list to the joint object
         self.joint.Proxy.setJointConnectors(self.joint, self.refs)
+
+        # Then we update transparency of components
+        self.updateTransparencies()
 
     def updateJointList(self):
         self.form.featureList.clear()
@@ -1622,6 +1628,25 @@ class TaskAssemblyCreateJoint(QtCore.QObject):
                 sname = sname + "." + element_name
             simplified_names.append(sname)
         self.form.featureList.addItems(simplified_names)
+
+    def updateTransparencies(self):
+        if len(self.refs) != 2:
+            UtilsAssembly.restore_transparency_backups(self.transparency_backups)
+            return
+
+        obj1 = UtilsAssembly.getObject(self.refs[0])
+        obj2 = UtilsAssembly.getObject(self.refs[1])
+
+        for obj, transparency_value in self.transparency_backups.items():
+            vobj = obj.ViewObject
+
+            if hasattr(vobj, "Transparency"):
+                if obj == obj1 or obj == obj2:
+                    vobj.Transparency = 0
+                    vobj.Selectable = True
+                else:
+                    vobj.Transparency = 80
+                    vobj.Selectable = False
 
     def updateLimits(self):
         needLengthLimits = self.jType in JointUsingLimitLength
