@@ -675,7 +675,7 @@ def add_properties(
                 obj.addProperty("App::PropertyString", attr, "IFC")
             if value is not None:
                 setattr(obj, attr, str(value))
-<<<<<<< HEAD
+
     # annotation properties
     if ifcentity.is_a("IfcGridAxis"):
         axisdata = ifc_export.get_axis(ifcentity)
