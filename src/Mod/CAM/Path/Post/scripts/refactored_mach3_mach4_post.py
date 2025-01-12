@@ -95,7 +95,6 @@ class Refactored_Mach3_Mach4(PostProcessor):
             self.values, self.argument_defaults, self.all_arguments_visible
         )
 
-
     def init_values(self, values: Values) -> None:
         """Initialize values that are used throughout the postprocessor."""
         #
