@@ -1,5 +1,4 @@
 /***************************************************************************
- *   Copyright (c) 2010 Werner Mayer <wmayer[at]users.sourceforge.net>     *
  *                                                                         *
  *   This file is part of the FreeCAD CAx development system.              *
  *                                                                         *
@@ -20,48 +19,33 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef PART_FEATUREMIRRORING_H
-#define PART_FEATUREMIRRORING_H
+#include "PreCompiled.h"
 
-#include <App/PropertyStandard.h>
+// inclusion of the generated files (generated out of NavigationStylePy.xml)
+#include "NavigationStylePy.h"
+#include "NavigationStylePy.cpp"
 
-#include "PartFeature.h"
 
+using namespace Gui;
 
-namespace Part
+/** @class NavigationStylePy
+ * The NavigationStyle Python class provides additional methods for manipulation of
+ * navigation style objects.
+ * @see NavigationStyle
+ */
+
+// returns a string which represent the object e.g. when printed in python
+std::string NavigationStylePy::representation() const
 {
+    return {"<NavigationStyle object>"};
+}
 
-class PartExport Mirroring : public Part::Feature
+PyObject* NavigationStylePy::getCustomAttributes(const char* /*attr*/) const
 {
-    PROPERTY_HEADER_WITH_OVERRIDE(Part::Mirroring);
+    return nullptr;
+}
 
-public:
-    Mirroring();
-
-    App::PropertyLink Source;
-    App::PropertyPosition Base;
-    App::PropertyDirection Normal;
-    App::PropertyLinkSub MirrorPlane;
-
-    /** @name methods override feature */
-    //@{
-    /// recalculate the feature
-    App::DocumentObjectExecReturn *execute() override;
-    short mustExecute() const override;
-    /// returns the type name of the ViewProvider
-    const char* getViewProviderName() const override {
-        return "PartGui::ViewProviderMirror";
-    }
-    //@}
-
-protected:
-    void onChanged (const App::Property* prop) override;
-
-    void handleChangedPropertyType(Base::XMLReader &reader, const char *TypeName, App::Property * prop) override;
-
-};
-
-} //namespace Part
-
-
-#endif // PART_FEATUREMIRRORING_H
+int NavigationStylePy::setCustomAttributes(const char* /*attr*/, PyObject* /*obj*/)
+{
+    return 0;
+}
