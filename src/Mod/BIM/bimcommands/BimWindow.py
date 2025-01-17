@@ -233,11 +233,15 @@ class Arch_Window:
             FreeCADGui.doCommand("win = Arch.makeWindowPreset('" + WindowPresets[self.Preset] + "', " + wp + "placement=pl)")
 
         if self.Include:
-            host = None
-            if self.baseFace is not None:
-                host = self.baseFace[0]
-            elif obj:
-                host = obj
+            def get_host():
+                if self.baseFace is not None:
+                    return self.baseFace[0]
+                elif obj:
+                    return obj
+                else:
+                    return None
+
+            host = get_host()
             if Draft.getType(host) in ALLOWEDHOSTS:
                 FreeCADGui.doCommand("win.Hosts = [FreeCAD.ActiveDocument." + host.Name + "]")
                 siblings = host.Proxy.getSiblings(host)
