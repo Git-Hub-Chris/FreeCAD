@@ -138,7 +138,8 @@ void Segmentation::accept()
     std::string internalname = "Segments_";
     internalname += myMesh->getNameInDocument();
 
-    App::DocumentObjectGroup* group = document->addObject<App::DocumentObjectGroup>(internalname.c_str());
+    App::DocumentObjectGroup* group =
+        document->addObject<App::DocumentObjectGroup>(internalname.c_str());
     std::string labelname = "Segments ";
     labelname += myMesh->Label.getValue();
     group->Label.setValue(labelname);

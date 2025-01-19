@@ -497,7 +497,8 @@ void CmdSegmentationFromComponents::activated(int)
     for (auto it : sel) {
         std::string internalname = "Segments_";
         internalname += it->getNameInDocument();
-        App::DocumentObjectGroup* group = doc->addObject<App::DocumentObjectGroup>(internalname.c_str());
+        App::DocumentObjectGroup* group =
+            doc->addObject<App::DocumentObjectGroup>(internalname.c_str());
         std::string labelname = "Segments ";
         labelname += it->Label.getValue();
         group->Label.setValue(labelname);

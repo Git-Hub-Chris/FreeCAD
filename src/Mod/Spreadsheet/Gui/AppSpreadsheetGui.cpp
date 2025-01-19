@@ -69,7 +69,8 @@ private:
     {
         try {
             Base::FileInfo file(Name);
-            Spreadsheet::Sheet* pcSheet = pcDoc->addObject<Spreadsheet::Sheet>(file.fileNamePure().c_str());
+            Spreadsheet::Sheet* pcSheet =
+                pcDoc->addObject<Spreadsheet::Sheet>(file.fileNamePure().c_str());
 
             pcSheet->importFromFile(Name, '\t', '"', '\\');
             pcSheet->execute();

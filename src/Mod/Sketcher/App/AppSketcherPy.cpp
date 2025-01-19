@@ -95,7 +95,8 @@ private:
             }
 
             if (file.hasExtension("skf")) {
-                Sketcher::SketchObjectSF* pcFeature = pcDoc->addObject<Sketcher::SketchObjectSF>(file.fileNamePure().c_str());
+                Sketcher::SketchObjectSF* pcFeature =
+                    pcDoc->addObject<Sketcher::SketchObjectSF>(file.fileNamePure().c_str());
                 pcFeature->SketchFlatFile.setValue(EncodedName.c_str());
 
                 pcDoc->recompute();
