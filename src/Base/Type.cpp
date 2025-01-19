@@ -59,7 +59,7 @@ map<string, unsigned int> Type::typemap;
 vector<TypeData*> Type::typedata;
 set<string> Type::loadModuleSet;
 
-void* Type::createInstance()
+void* Type::createInstance() const
 {
     instantiationMethod method = typedata[index]->instMethod;
     return method ? (*method)() : nullptr;
@@ -226,9 +226,7 @@ Type Type::getTypeIfDerivedFrom(const char* name, const Type& parent, bool bLoad
         importModule(name);
     }
 
-    Type type = fromName(name);
-
-    if (type.isDerivedFrom(parent)) {
+    if (Type type = fromName(name); type.isDerivedFrom(parent)) {
         return type;
     }
 
