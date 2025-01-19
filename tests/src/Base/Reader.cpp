@@ -9,11 +9,11 @@
 #include "Base/Exception.h"
 #include "Base/Reader.h"
 #include <array>
-#include <boost/filesystem.hpp>
+#include <filesystem>
 #include <fstream>
 #include <xercesc/util/PlatformUtils.hpp>
 
-namespace fs = boost::filesystem;
+namespace fs = std::filesystem;
 
 class ReaderXML
 {
