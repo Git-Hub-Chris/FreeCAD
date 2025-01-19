@@ -69,6 +69,10 @@ enum class MessageOption {
     Throw, /**< Throw an exception. */
 };
 
+struct DocumentOpenFlags {
+    bool createView {true};
+    bool temporary {false};
+};
 
 /** The Application
  *  The root of the whole application
@@ -94,13 +98,13 @@ public:
      * the user and stored in the App::Document::Name property.
      */
     App::Document* newDocument(const char * Name=nullptr, const char * UserName=nullptr,
-            bool createView=true, bool tempDoc=false);
+            DocumentOpenFlags OpenFlags=DocumentOpenFlags());
     /// Closes the document \a name and removes it from the application.
     bool closeDocument(const char* name);
     /// find a unique document name
     std::string getUniqueDocumentName(const char *Name, bool tempDoc=false) const;
     /// Open an existing document from a file
-    App::Document* openDocument(const char * FileName=nullptr, bool createView=true);
+    App::Document* openDocument(const char * FileName=nullptr, DocumentOpenFlags openFlags = DocumentOpenFlags{});
     /** Open multiple documents
      *
      * @param filenames: input file names
@@ -122,7 +126,7 @@ public:
             const std::vector<std::string> *paths=nullptr,
             const std::vector<std::string> *labels=nullptr,
             std::vector<std::string> *errs=nullptr,
-            bool createView = true);
+            DocumentOpenFlags openFlags = DocumentOpenFlags{});
     /// Retrieve the active document
     App::Document* getActiveDocument() const;
     /// Retrieve a named document
@@ -486,7 +490,7 @@ protected:
 
     /// open single document only
     App::Document* openDocumentPrivate(const char * FileName, const char *propFileName,
-            const char *label, bool isMainDoc, bool createView, std::vector<std::string> &&objNames);
+            const char *label, bool isMainDoc, DocumentOpenFlags openFlags, std::vector<std::string> &&objNames);
 
     /// Helper class for App::Document to signal on close/abort transaction
     class AppExport TransactionSignaller {
