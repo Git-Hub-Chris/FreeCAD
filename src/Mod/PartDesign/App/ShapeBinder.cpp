@@ -597,8 +597,11 @@ void SubShapeBinder::update(SubShapeBinder::UpdateOption options) {
                 recomputeCopy = true;
                 clearCopiedObjects();
 
-                auto tmpDoc = App::GetApplication().newDocument(
-                    "_tmp_binder", nullptr, false, true);
+                App::DocumentOpenFlags openFlags;
+                openFlags.createView = false;
+                openFlags.temporary = true;
+
+                auto tmpDoc = App::GetApplication().newDocument("_tmp_binder", nullptr, openFlags);
                 tmpDoc->setUndoMode(0);
                 auto objs = tmpDoc->copyObject({ obj }, true, true);
                 if (!objs.empty()) {

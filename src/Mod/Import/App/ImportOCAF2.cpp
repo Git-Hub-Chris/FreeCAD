@@ -411,7 +411,10 @@ App::Document* ImportOCAF2::getDocument(App::Document* doc, TDF_Label label)
         return doc;
     }
 
-    auto newDoc = App::GetApplication().newDocument(name.c_str(), name.c_str(), false);
+    App::DocumentOpenFlags openFlags;
+    openFlags.createView = false;
+    auto newDoc = App::GetApplication().newDocument(name.c_str(), name.c_str(), openFlags);
+
     std::ostringstream ss;
     Base::FileInfo fi(doc->FileName.getValue());
     std::string path = fi.dirPath();
