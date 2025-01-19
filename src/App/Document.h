@@ -593,6 +593,9 @@ protected:
     void writeObjects(const std::vector<App::DocumentObject*>&, Base::Writer& writer) const;
     bool saveToFile(const char* filename) const;
     int countObjectsOfType(const Base::Type& typeId) const;
+    DocumentObject* addObject(const Base::Type& type, const char* pObjectName = nullptr,
+                              bool isNew = true, const char* viewType = nullptr,
+                              bool isPartial = false);
 
     void onBeforeChange(const Property* prop) override;
     void onChanged(const Property* prop) override;

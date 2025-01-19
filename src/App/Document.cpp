@@ -3544,11 +3544,27 @@ DocumentObject* Document::addObject(const char* sType,
                                     const char* viewType,
                                     bool isPartial)
 {
-    Base::Type type =
-        Base::Type::getTypeIfDerivedFrom(sType, App::DocumentObject::getClassTypeId(), true);
-    if (type.isBad()) {
+    Base::Type::importModule(sType);
+    const Base::Type type = Base::Type::fromName(sType);
+    
+    if (type == Base::Type::badType()) {
         std::stringstream str;
-        str << "'" << sType << "' is not a document object type";
+        str << "'" << sType << "' is not a valid type";
+        throw Base::TypeError(str.str());
+    }
+
+    return addObject(type, pObjectName, isNew, viewType, isPartial);
+}
+
+DocumentObject* Document::addObject(const Base::Type& type,
+                                    const char* pObjectName,
+                                    bool isNew,
+                                    const char* viewType,
+                                    bool isPartial)
+{
+    if (!type.isDerivedFrom(App::DocumentObject::getClassTypeId())) {
+        std::stringstream str;
+        str << "'" << type.getName() << "' is not a document object type";
         throw Base::TypeError(str.str());
     }
 
@@ -3557,8 +3573,7 @@ DocumentObject* Document::addObject(const char* sType,
         return nullptr;
     }
 
-    App::DocumentObject* pcObject = static_cast<App::DocumentObject*>(typeInstance);
-
+    auto* pcObject = static_cast<App::DocumentObject*>(typeInstance);
     pcObject->setDocument(this);
 
     // do no transactions if we do a rollback!
@@ -3571,33 +3586,26 @@ DocumentObject* Document::addObject(const char* sType,
     }
 
     // get Unique name
-    string ObjectName;
-
-    if (pObjectName && pObjectName[0] != '\0') {
-        ObjectName = getUniqueObjectName(pObjectName);
-    }
-    else {
-        ObjectName = getUniqueObjectName(sType);
-    }
-
+    const bool hasName = pObjectName && pObjectName[0] != '\0';
+    const std::string objectName = getUniqueObjectName(hasName ? pObjectName : type.getName());
 
     d->activeObject = pcObject;
 
     // insert in the name map
-    d->objectMap[ObjectName] = pcObject;
+    d->objectMap[objectName] = pcObject;
     // generate object id and add to id map;
     pcObject->_Id = ++d->lastObjectId;
     d->objectIdMap[pcObject->_Id] = pcObject;
     // cache the pointer to the name string in the Object (for performance of
     // DocumentObject::getNameInDocument())
-    pcObject->pcNameInDocument = &(d->objectMap.find(ObjectName)->first);
+    pcObject->pcNameInDocument = &(d->objectMap.find(objectName)->first);
     // insert in the vector
     d->objectArray.push_back(pcObject);
 
     // If we are restoring, don't set the Label object now; it will be restored later. This is to
     // avoid potential duplicate label conflicts later.
     if (!d->StatusBits.test(Restoring)) {
-        pcObject->Label.setValue(ObjectName);
+        pcObject->Label.setValue(objectName);
     }
 
     // Call the object-specific initialization
