@@ -370,11 +370,10 @@ void TaskMeasure::ensureGroup(Measure::MeasureBase* measurement)
 
 
     if (!obj || !obj->isValid()
-        || !obj->isDerivedFrom(App::DocumentObjectGroup::getClassTypeId())) {
-        obj = doc->addObject("App::DocumentObjectGroup",
-                             measurementGroupName,
-                             true,
-                             "MeasureGui::ViewProviderMeasureGroup");
+        || !obj->isDerivedFrom<App::DocumentObjectGroup>()) {
+        obj = doc->addObject<App::DocumentObjectGroup>(measurementGroupName,
+                                                       true,
+                                                       "MeasureGui::ViewProviderMeasureGroup");
     }
 
     auto group = static_cast<App::DocumentObjectGroup*>(obj);
