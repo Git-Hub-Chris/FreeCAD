@@ -32,8 +32,10 @@
 # ... report file shall be available in an artifact with the same name.
 
 name: WrapUp
+permissions:
+  contents: read
+  actions: read
 on:
-  workflow_call:
     inputs:
       previousSteps:
         type: string
