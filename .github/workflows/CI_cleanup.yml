@@ -37,6 +37,10 @@
 
 name: FreeCAD CI cleaner
 
+permissions:
+  contents: read
+  actions: write
+
 on:
   workflow_run:
     workflows: [FreeCAD master CI]
