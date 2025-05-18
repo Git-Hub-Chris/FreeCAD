@@ -26,6 +26,9 @@
 
 name: FreeCAD master CI
 
+permissions:
+  contents: read
+
 on: [workflow_dispatch, push, pull_request]
 
 concurrency:
