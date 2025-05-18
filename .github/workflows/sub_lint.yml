@@ -24,6 +24,8 @@
 # This is the lint workflow for CI of FreeCAD
 
 name: Lint
+permissions:
+  contents: read
 
 on:
   workflow_call:
