@@ -23,6 +23,8 @@
 # This workflow aims at building and testing FreeCAD on Windows using MSVC.
 
 name: Build Windows
+permissions:
+  contents: read
 on:
   workflow_call:
     inputs:
