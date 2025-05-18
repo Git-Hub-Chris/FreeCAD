@@ -65,7 +65,7 @@ QT_TRANSLATE_NOOP = FreeCAD.Qt.QT_TRANSLATE_NOOP
 
 # texts and icons
 WIKI_URL = "https://wiki.freecad.org"
-MD_RAW_URL = "https://raw.githubusercontent.com/FreeCAD/FreeCAD-documentation/main/wiki"
+MD_RAW_URL = r"https:\/\/raw\.githubusercontent\.com\/FreeCAD\/FreeCAD\-documentation\/main\/wiki"
 MD_RENDERED_URL = "https://github.com/FreeCAD/FreeCAD-documentation/blob/main/wiki"
 MD_TRANSLATIONS_FOLDER = "translations"
 ERRORTXT = translate(
