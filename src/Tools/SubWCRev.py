@@ -10,6 +10,7 @@
 # 2011/02/05: The script was extended to support also Bazaar
 
 import os, sys, re, time, getopt
+from urllib.parse import urlparse
 import xml.sax
 import xml.sax.handler
 import xml.sax.xmlreader
@@ -277,7 +278,7 @@ class GitControl(VersionControl):
                         url = "git://%s" % match.group(1)
                     entryscore = (
                         url == "git://github.com/FreeCAD/FreeCAD.git",
-                        "github.com" in url,
+                        urlparse(url).hostname == "github.com",
                         branch == self.branch,
                         branch == "main",
                         "@" not in url,
